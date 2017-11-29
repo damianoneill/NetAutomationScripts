@@ -1,0 +1,123 @@
+#jinja2: lstrip_blocks: True
+system {
+    host-name {{ hostname }};
+}
+{#
+**************************************************
+###         Interfaces configuration        ######
+**************************************************
+    #}
+interfaces {
+{% for intf in interfaces %}
+    {{ intf.name }} {
+        {% if intf.description is defined %} 
+         description "{{intf.description}}"
+        {% endif %}
+        {% if intf.tagged == true %} 
+        flexible-vlan-tagging;
+        encapsulation flexible-ethernet-services;
+        {% endif %}
+        {% for vlan in intf.vlans %}
+        unit {{vlan.vlanid}} {
+            {% if vlan.description is defined %} 
+            description "{{vlan.description}}";
+            {% endif %}
+            {% if vlan.vlanid != '0' %} 
+            vlan-id {{vlan.vlanid}};
+            {% endif %}
+            family inet {
+                address {{vlan.ipaddr}}/{{vlan.netmask|default('30')}}
+            }
+            {% if vlan.mpls is defined and vlan.mpls == true %}
+            family mpls;
+            {% endif %}
+        }
+        {% endfor %}
+    }    
+{% endfor %}
+}
+{#
+**************************************************
+###         Global Variables                ######
+**************************************************
+    #}
+routing-options {
+    router-id {{ router_id }};
+    autonomous-system {{ bgp_asn }};
+}
+protocols {
+{% if bgp is defined %}
+    bgp {
+    {% for grp in bgp.groups %}
+        group {{grp.name}} {
+            type {{grp.type}};
+            local-address {{ grp.localaddress}};
+        {% for af in grp.afs %}
+        {% if af == 'inet-unicast' %}
+            family inet {               
+                unicast;
+            }
+        {% endif %}
+        {% if af == 'inet-vpn' %}
+            family inet-vpn {
+                unicast;
+            }
+        {% endif %}
+        {% if af == 'evpn' %}
+            family evpn {
+                signaling;
+            }
+        {% endif %}
+        {% endfor %}
+        {% for peer in grp.peers %}
+            neighbor {{ peer.ip }};
+        {% endfor %}
+        }
+    {% endfor %}
+    }
+{% endif %}
+{% if ospf is defined %}
+    ospf {
+        {% for area in ospf.areas %}
+        area {{ area.id }} {
+            {% for intf in area.interfaces %}
+            interface {{ intf.name }} {
+                {% if intf.type is defined %} 
+                interface-type {{intf.type}};
+                {% endif %}
+                {% if intf.metric is defined %} 
+                metric {{intf.metric }};
+                {% endif %}
+                {% if intf.passive == true %}
+                passive;
+                {% endif %}
+            }
+            {% endfor %}
+        }
+        {% endfor %}                               
+    }
+{% endif %}
+{% if ldp is defined %}
+    ldp {
+        {% for intf in ldp.interfaces %}
+        interface {{intf}};
+        {% endfor %}
+    }
+{% endif %}
+
+{#% In this loop if LDP is enabled then MPLS will be enabled also on this interface %#}
+{% if mpls is defined %}
+    mpls {
+        {% for intf in ldp.interfaces %}
+        interface {{intf}};
+        {% endfor %}
+    }
+{% endif %}
+{% if rsvp is defined %}
+    rsvp {
+        {% for intf in rsvp.interfaces %}
+        interface {{intf}};
+        {% endfor %}
+    }
+}
+{% endif %}

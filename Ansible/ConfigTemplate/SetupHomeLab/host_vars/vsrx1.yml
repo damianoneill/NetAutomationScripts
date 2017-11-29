@@ -1,0 +1,78 @@
+---
+
+hostname: "vSRX1"
+router_id: 10.100.11.11
+bgp_asn: 65000
+
+interfaces:
+ - name: lo0
+   tagged: false
+   vlans:
+    - vlanid: 0
+      ipaddr: 10.100.1.1
+      netmask: 32
+      mpls: false
+
+ - name: ge-0/0/0
+   description: "OOB to Ansible Host"
+   tagged: false
+   vlans:
+    - vlanid: 0
+      ipaddr: 192.10.1.101
+      netmask: 24
+      mpls: false
+
+ - name: ge-0/0/1
+   description: "vsrx1--ge-0/0/1__vsrx2--ge-0/0/1"
+   tagged: false
+   vlans:
+    - vlanid: 0
+      ipaddr: 172.10.12.1
+      netmask: 24
+      mpls: true
+
+ - name: ge-0/0/2
+   description: "vsrx1--ge-0/0/1__vsrx3--ge-0/0/1"
+   tagged: false
+   vlans:
+    - vlanid: 0
+      ipaddr: 172.10.23.1
+      netmask: 24
+      mpls: true
+bgp:
+ groups:
+  - name: "Core-RR"
+    type: internal
+    localaddress: 10.100.11.11
+    afs:
+     - inet-vpn
+     - inet-unicast
+     - evpn
+    peers:
+     - ip: 10.100.12.12
+       description: "Peering to dc1-gw2"
+     - ip: 10.200.11.11
+       description: "Peering to dc2-gw1"
+     - ip: 10.200.12.12
+       description: "Peering to dc2-gw2"
+
+ospf:
+ areas:
+  - id: 0
+    interfaces:
+     - name: ge-0/0/1.0
+       metric: 100
+       type: p2p
+       passive: false
+     - name: ge-0/0/2.0
+       metric: 100
+       type: p2p
+       passive: false
+     - name: lo0.0
+       passive: true
+
+ldp:
+ interfaces:
+  - ge-0/0/0.0
+  - ge-0/0/1.0
+  - lo0.0 
