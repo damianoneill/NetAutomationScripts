@@ -1,0 +1,9 @@
+---
+
+- name: show arp on all live srx nodes
+  gather_facts: no
+  hosts: vsrx1
+  tasks:
+  - raw: "show arp"
+    register: show
+  - debug: var=show.stdout_lines #var=vars.inventory_hostname

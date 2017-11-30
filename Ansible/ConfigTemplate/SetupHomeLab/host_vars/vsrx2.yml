@@ -1,7 +1,7 @@
 ---
 
-hostname: "vSRX1"
-router_id: 10.100.1.1
+hostname: "vSRX2"
+router_id: 10.100.2.2
 bgp_asn: 65000
 
 interfaces:
@@ -9,7 +9,7 @@ interfaces:
    tagged: false
    vlans:
     - vlanid: 0
-      ipaddr: 10.100.1.1
+      ipaddr: 10.100.2.2
       netmask: 32
       mpls: false
 
@@ -18,38 +18,38 @@ interfaces:
    tagged: false
    vlans:
     - vlanid: 0
-      ipaddr: 192.10.1.101
+      ipaddr: 192.10.1.102
       netmask: 24
       mpls: false
 
  - name: ge-0/0/2
-   description: "vsrx1--ge-0/0/2__vsrx2--ge-0/0/2"
+   description: "vsrx2--ge-0/0/2__vsrx1--ge-0/0/2"
    tagged: false
    vlans:
     - vlanid: 0
-      ipaddr: 172.10.12.1
+      ipaddr: 172.10.12.2
       netmask: 24
       mpls: true
 
  - name: ge-0/0/3
-   description: "vsrx1--ge-0/0/3__vsrx3--ge-0/0/2"
+   description: "vsrx1--ge-0/0/3__vsrx3--ge-0/0/3"
    tagged: false
    vlans:
     - vlanid: 0
-      ipaddr: 172.10.23.1
+      ipaddr: 172.10.23.2
       netmask: 24
       mpls: true
 bgp:
  groups:
   - name: "Core-RR"
     type: internal
-    localaddress: 10.100.1.1
+    localaddress: 10.100.2.2
     afs:
      - inet-vpn
      - inet-unicast
     peers:
-     - ip: 10.100.2.2
-       description: "Peering to vSRX2"
+     - ip: 10.100.1.1
+       description: "Peering to vSRX1"
      - ip: 10.100.3.3
        description: "Peering to vSRX3"
 

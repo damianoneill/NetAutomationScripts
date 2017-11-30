@@ -1,0 +1,15 @@
+---
+
+- name: create a new directory
+  gather_facts: no
+  connection: local
+  hosts: all
+  tasks:
+  - file: path=configs state=directory
+
+- name: create configuration files for srx nodes
+  gather_facts: no
+  connection: local
+  hosts: all
+  tasks:
+  - template: src=jnpr-basic.j2 dest=configs/{{inventory_hostname}}.txt

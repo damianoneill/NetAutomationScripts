@@ -1,0 +1,7 @@
+vsrx1
+vsrx2
+vsrx3
+
+[all:vars]
+ansible_user=lab
+ansible_ssh_pass=lab123
