@@ -1,0 +1,12 @@
+---
+
+- name: Get Facts on JunOS
+  gather_facts: no
+  connection: local
+  hosts: all
+  tasks:
+    - junos_facts: #host={{ inventory_hostname }}
+        gather_subset: interfaces
+      register: show
+    
+    - debug: var=show.ansible_facts

@@ -1,0 +1,15 @@
+Device name is vsrx1
+vsrx1  10.100.1.1 is reachable
+vsrx1  10.100.2.2 is reachable
+vsrx1  10.100.3.3 is reachable
+vsrx1  10.100.10.10 is not reachable
+Device name is vsrx2
+vsrx2  10.100.1.1 is reachable
+vsrx2  10.100.2.2 is reachable
+vsrx2  10.100.3.3 is reachable
+vsrx2  10.100.10.10 is not reachable
+Device name is vsrx3
+vsrx3  10.100.1.1 is reachable
+vsrx3  10.100.2.2 is reachable
+vsrx3  10.100.3.3 is reachable
+vsrx3  10.100.10.10 is not reachable

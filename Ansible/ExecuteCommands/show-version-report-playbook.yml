@@ -1,0 +1,21 @@
+---
+
+- name: execute command on JunOS srx device
+  gather_facts: no
+  connection: local
+  hosts: all
+  tasks:
+    - junos_command: 
+       commands: show version
+       display: xml
+      register: show
+
+    - file: path=version_report.txt state=absent
+    - file: path=version_report.txt state=touch
+
+    - lineinfile:
+        path: version_report.txt
+        regexp: "{{ inventory_hostname }}"
+        line: "{{ inventory_hostname }}: software version "
+      when: "not ( version in show.output[0]['rpc-reply']['software-information']['package-information'].comment)"
+

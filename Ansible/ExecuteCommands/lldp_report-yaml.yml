@@ -1,0 +1,23 @@
+---
+
+- name: execute command on JunOS srx device
+  gather_facts: no
+  connection: local
+  hosts: all
+  tasks:
+    - file: path=lldp_data.csv state=touch
+
+    - junos_command: 
+       commands: show lldp neighbors
+       display: xml
+      register: show
+    - set_fact: lldp_output="{{show.output[0]['rpc-reply']}}"
+    - set_fact: lldp_neigbour_table="{{ lldp_output["lldp-neighbors-information"]["lldp-neighbor-information"] }}"
+
+    - debug: var=hostvars[inventory_hostname].lldp_neigbour_table
+
+    - name: send output in YAML
+      copy:
+        content: "{{ hostvars[item].lldp_output|to_nice_yaml (indent=4) }}"
+        dest: "./summary.yml"
+      with_items: "{{ play_hosts}}"

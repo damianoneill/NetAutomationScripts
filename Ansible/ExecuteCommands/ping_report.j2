@@ -1,0 +1,11 @@
+{% for host in ansible_play_hosts%}
+Device name is {{ host }}
+{% for ping_result in hostvars[host].show.results %}
+{#{{ ping_result|to_nice_yaml(indent=8) }}#}
+{% if ping_result.output[0]["rpc-reply"]["ping-results"]["ping-failure"] is defined %}
+{{host}}  {{ping_result.item}} is not reachable
+{% else %}
+{{host}}  {{ping_result.item}} is reachable
+{% endif %}
+{% endfor%}
+{% endfor%}

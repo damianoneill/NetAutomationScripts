@@ -1,0 +1,24 @@
+---
+
+- name: execute command on JunOS srx device
+  gather_facts: no
+  connection: local
+  hosts: all
+  tasks:
+    - file: path=arp_table.csv state=touch
+
+    - junos_command: 
+       commands: show arp
+       display: xml
+      register: show
+    - set_fact: arp_output="{{show.output[0]['rpc-reply']}}"
+    - set_fact: arp_table="{{ arp_output["arp-table-information"]["arp-table-entry"] }}"
+    
+    - lineinfile:
+        path: arp_table.csv
+        regexp: "{{inventory_hostname}},{{ item ['interface-name']}}"
+        line: "{{inventory_hostname}},{{ item ['interface-name']}},{{ item['ip-address']}},{{ item['mac-address']}}"
+      with_items: "{{ arp_table }}"
+    
+#    - debug: var={{ item }}
+#      with_items: "{{ arp_table}}"

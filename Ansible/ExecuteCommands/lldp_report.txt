@@ -1,0 +1,12 @@
+Device name is vsrx1
+
+vsrx1  vSRX2    ge-0/0/2.0
+vsrx1  vSRX3    ge-0/0/2.0
+Device name is vsrx2
+
+vsrx2  vSRX1    ge-0/0/2.0
+vsrx2  vSRX3    ge-0/0/3.0
+Device name is vsrx3
+
+vsrx3  vSRX1    ge-0/0/3.0
+vsrx3  vSRX2    ge-0/0/3.0

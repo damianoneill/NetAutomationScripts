@@ -1,0 +1,19 @@
+---
+
+- name: execute command on JunOS srx device
+  gather_facts: no
+  connection: local
+  hosts: all
+  tasks:
+    - junos_command: 
+       commands: ping {{item}} rapid count 5
+       timeout: 3
+       retries: 1
+       display: xml
+      register: show
+      with_items: "{{ping_target}}"
+      failed_when: "show.output[0]['rpc-reply']['ping-results']['ping-failure'] is defined"
+      ignore_errors: yes
+  
+    - debug: var={{ item }}.output[0]['rpc-reply']
+      with_items: "{{show.results}}"

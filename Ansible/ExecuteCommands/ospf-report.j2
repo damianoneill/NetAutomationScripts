@@ -1,0 +1,7 @@
+{% for host in ansible_play_hosts%}
+Device name is {{ host }}
+
+{% for lldp_peer in hostvars[host].lldp_neigbour_table %}
+{{host}}  {{lldp_peer["lldp-remote-system-name"]}}    {{lldp_peer["lldp-remote-port-description"]}}
+{% endfor%}
+{% endfor%}

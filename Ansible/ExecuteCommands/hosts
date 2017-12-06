@@ -1,0 +1,9 @@
+#192.10.1.101
+vsrx1
+vsrx2	ansible_host=192.10.1.102
+vsrx3	ansible_host=192.10.1.103
+
+[all:vars]
+version= "12.2"
+ansible_user=lab
+ansible_ssh_pass=lab123

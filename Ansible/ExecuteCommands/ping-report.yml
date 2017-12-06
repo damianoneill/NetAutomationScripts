@@ -1,0 +1,39 @@
+---
+
+- name: Verify that all hosts are up
+  gather_facts: no
+  connection: local
+  hosts: all
+  tasks:
+    - junos_command: 
+       commands: ping {{item}} rapid count 5
+       timeout: 3
+       retries: 1
+       display: xml
+      register: show
+      with_items: "{{ping_target}}"
+      failed_when: "show.output[0]['rpc-reply']['ping-results']['ping-failure'] is defined"
+      ignore_errors: yes
+      
+      
+#    - set_fact: ping_report=hostvars[inventory_hostname]
+    - debug: var=hostvars
+
+    - name: Generate Report for ping
+      template: src=ping_report.j2 dest=./ping_report.txt
+      run_once: yes 
+      #failed_when: "show.output[0]['rpc-reply']['ping-results']['ping-failure'] is defined"
+      #ignore_errors: yes
+    
+#    - set_fact: error_ping_down=1
+#      when: "(item.output[0]['rpc-reply']['ping-results']['ping-failure'] is defined)"
+#      with_items: "{{ show.results }}"
+
+#    - debug: var="{{item}}"
+#      with_items: "{{ show.results }}"
+
+#      
+
+#    - name: Generate Report for ping
+#      template: src=ping-report.j2 dest=./ping_report.txt
+  

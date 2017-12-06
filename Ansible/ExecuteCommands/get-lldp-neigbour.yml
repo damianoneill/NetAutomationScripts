@@ -1,0 +1,26 @@
+---
+
+- name: execute command on JunOS srx device
+  gather_facts: no
+  connection: local
+  hosts: all
+  tasks:
+    - file: path=lldp_data.csv state=touch
+
+    - junos_command: 
+       commands: show lldp neighbors
+       display: xml
+      register: show
+    - set_fact: lldp_output="{{show.output[0]['rpc-reply']}}"
+    - set_fact: lldp_neigbour_table="{{ lldp_output["lldp-neighbors-information"]["lldp-neighbor-information"] }}"
+
+    - debug: var=hostvars
+
+#    - lineinfile:
+#        path: lldp_data.csv
+#        regexp: "{{inventory_hostname}},{{ item ['lldp-local-interface']}}"
+#        line: "{{inventory_hostname}},{{ item ['lldp-local-interface']}},{{ item['lldp-remote-port-description']}},{{ item['lldp-remote-system-name']}}"
+#      with_items: "{{ lldp_neigbour_table }}"
+    
+#    - debug: var={{ item }}
+#      with_items: "{{ arp_table}}"
