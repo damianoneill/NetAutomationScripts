@@ -1,0 +1,19 @@
+---
+
+- hosts: localhost
+  name: Create node data model
+  gather_facts: no
+  vars:
+    interfaces:
+        - ge-0/0/0
+        - ge-0/0/1
+    bgp_peers:    
+        - is_up: true
+          local_as: 65000
+  tasks:
+    #- debug: msg={{ interfaces|append_str('.0')}}
+#    - set_fact:
+
+    - debug: var=interfaces
+    - debug: var=bgp_peers
+    - debug: msg={{ bgp_peers|map(attribute='is_up')|list}}

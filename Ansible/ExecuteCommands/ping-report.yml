@@ -16,7 +16,7 @@
       ignore_errors: yes
       
       
-#    - set_fact: ping_report=hostvars[inventory_hostname]
+    - set_fact: ping_report=hostvars[inventory_hostname]
     - debug: var=hostvars
 
     - name: Generate Report for ping

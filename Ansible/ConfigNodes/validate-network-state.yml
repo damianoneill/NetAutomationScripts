@@ -1,0 +1,32 @@
+---
+
+- name: Get operational Data
+  gather_facts: no
+  connection: local
+  hosts: all
+
+  tasks:
+    - name: Create Directory for pre validation
+      file: path={{output_directory}} state=directory
+      run_once: true
+
+    - name: Get configuration
+      junos_command:
+        commands:
+          #- show interfaces
+          - show ospf neighbor
+          - show bgp summary
+        display: xml
+      register: show_output
+
+    - name: Get OSPF Info
+      set_fact: ospf_output={{show_output.output[0]['rpc-reply']['ospf-neighbor-information']['ospf-neighbor']}}
+
+    - name: Get BGP Info
+      set_fact: bgp_output={{show_output.output[1]['rpc-reply']['bgp-information']['bgp-peer']}}
+
+    - debug: var=ospf_output 
+      
+    - name: Generate the Report
+      template: src=report-layout.j2 dest=./{{output_directory}}/{{inventory_hostname}}-state.txt
+

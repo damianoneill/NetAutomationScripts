@@ -1,0 +1,81 @@
+---
+- hosts: localhost
+  name: Create node data model
+  gather_facts: no
+  tags: [ model ]
+  vars_files:
+  - "{{model|default('core-model.yml')}}"
+  tasks:
+  - name: Create per-node data model from fabric data model
+    template: src=core-to-nodes.j2 dest=./nodes.yml
+
+#  - debug: var=vars
+
+- name: Generate Configuration for all routers
+  gather_facts: no
+  connection: local
+  hosts: all
+  tags: [ template ]
+  tasks:
+    - include_vars: "./nodes.yml"
+    - file: path=config  state=directory
+      run_once: true
+    - name: Generate Configuration
+      template: src=./jnpr-template.j2 dest=config/{{inventory_hostname}}-config.txt
+
+- name: Validate BGP and LLDP
+  gather_facts: no
+  connection: local
+  hosts: all
+  tags: [ validate ]
+  tasks:
+
+#  - name: Deply LLD on all Routers
+#    junos_config:
+#      lines:
+#      - delete protocols lldp interface all
+
+#  - name: Wait for LLDP to start
+#    pause: seconds=10 prompt="Waiting for LLDP to start"
+#    when: wait_lldp is defined
+
+  - name: GET BGP and LLDP output
+    napalm_get_facts:
+      hostname: "{{ inventory_hostname }}"
+      username: "{{ ansible_user }}"
+      dev_os: junos
+      password: "{{ ansible_ssh_pass }}"
+      filter: 
+        - lldp_neighbors
+        - bgp_neighbors
+
+  #- debug: var=lldp_output
+
+  - name: Validating LLDP and BGP
+    include_vars: nodes.yml
+  - set_fact: node={{nodes[inventory_hostname]}}
+  - set_fact: core_intf={{node.links.keys()|append_str('.0')}}
+  - set_fact: lldp_intf={{napalm_lldp_neighbors.keys()}}
+#  - debug: var=hostvars[inventory_hostname].napalm_lldp_neighbors
+#  - debug:  var=napalm_bgp_neighbors
+#  - debug:  var=core_intf
+#  - debug: var=core_intf|difference(lldp_intf)|length
+
+  - assert:
+      that: core_intf|difference(lldp_intf)|length == 0
+      msg:  |
+        LLDP is not enabled on some fabric interfaces on {{inventory_hostname}}
+
+  - assert:
+      that: napalm_bgp_neighbors.global.peers[item].is_up == true
+      msg: "Neighbor {{item}} is not operational"
+    with_list: "{{node.bgp.internal.peers}}"
+
+#  - assert:
+#      that: >
+#        napalm_lldp_neighbors[item.key]|map(attribute='hostname')|list|
+#        intersect(item.value.remote+common.suffix)|length > 0
+#      msg: "Neighbor {{item.value.remote}} is not present on {{item.key}}"
+#    with_dict: "{{node.links}}"
+
+

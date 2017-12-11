@@ -1,0 +1,18 @@
+
+Device name is vsrx1
+#########################
+
+
+ospf_neighbor: 172.10.13.3
+ospf_neigbor_id: 10.100.3.3
+interface: ge-0/0/3.0
+ospf_state: Full
+
+bgp_neighbor: 10.100.2.2
+ospf_neigbor_as: 65000
+bgp_state: Established
+
+bgp_neighbor: 10.100.3.3
+ospf_neigbor_as: 65000
+bgp_state: Established
+

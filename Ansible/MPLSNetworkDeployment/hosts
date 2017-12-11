@@ -1,0 +1,7 @@
+vSRX1   ansible_host=192.10.1.101
+vSRX2	ansible_host=192.10.1.102
+vSRX3	ansible_host=192.10.1.103
+
+[all:vars]
+ansible_user=lab
+ansible_ssh_pass=lab123

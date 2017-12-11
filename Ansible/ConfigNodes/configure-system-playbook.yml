@@ -1,0 +1,31 @@
+---
+
+- name: get Facts JunOS SRX
+  gather_facts: no
+  connection: local
+  hosts: all
+  roles:
+    - Juniper.junos
+  tasks:
+    - name: Get JunOS SRX Facts
+      junos_get_facts:
+        host: "{{inventory_hostname}}"
+        user: "{{ansible_user}}"
+        passwd: "{{ansible_ssh_pass}}"
+      register: junos_facts
+    - debug: var=junos_facts
+
+- name: configure JunOS SRX
+  gather_facts: no
+  connection: local
+  hosts: all
+  tasks:
+    - junos_config: 
+       lines: 
+         - set system services netconf traceoptions file nc.txt size 1m world-readable
+         - set system services netconf traceoptions flag incoming
+       comment: Update the config for NETCONF tracing
+       backup: yes
+      register: config_result
+
+    - debug: var=config_result

@@ -1,0 +1,30 @@
+
+Device name is {{ inventory_hostname }}
+#########################
+
+{% if ospf_output is defined %}
+
+{% if ospf_output is mapping %}
+ospf_neighbor: {{ospf_output['neighbor-address']}}
+ospf_neigbor_id: {{ospf_output['neighbor-id']}}
+interface: {{ospf_output['interface-name']}}
+ospf_state: {{ospf_output['ospf-neighbor-state']}}
+{% else%}
+{% for ospf_peer in ospf_output %}
+ospf_neighbor: {{ospf_peer['neighbor-address']}}
+ospf_neigbor_id: {{ospf_peer['neighbor-id']}}
+interface: {{ospf_peer['interface-name']}}
+ospf_state: {{ospf_peer['ospf-neighbor-state']}}
+
+{% endfor%}
+{% endif %}
+{% endif %}
+
+{% if bgp_output is defined %}
+{% for bgp_peer in bgp_output %}
+bgp_neighbor: {{bgp_peer['peer-address']}}
+ospf_neigbor_as: {{bgp_peer['peer-as']}}
+bgp_state: {{bgp_peer['peer-state']}}
+
+{% endfor%}
+{% endif %}

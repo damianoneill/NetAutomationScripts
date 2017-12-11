@@ -1,0 +1,190 @@
+## Last changed: 2017-12-04 10:12:18 UTC
+version 12.1X47-D15.4;
+system {
+    host-name vSRX3;
+    no-redirects;
+    root-authentication {
+        encrypted-password "$1$DrzKfpJ7$fQBerstVWaIbcHnZ3QnDM1";
+        ssh-rsa "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDIOC+zXo3nBcEZA6z+1iOr5YgV5QGieFGD4Bq/EoEZWEP6Gvs33Ok0k/UOxYjB/HoU97oKwFHob71pg4zUhytA1aTkdMquVQaDPTZ7DI8MQGzM2CRH47Q8wvq0heALM7YQOHomfYg/DEsacprrtA/29X303TvX1pD9Io7ykOviouRP9yzCbi14FefIvZNxGqxLwPDSXKbw9rvmuWIxkLsT0TiC/kIjsWQKl9yH37Weu9BeH2WSBLTs0hzCjcOqXb89Iqa78SgNog9o3k8ePmblKbJOlflplTvNRidsTDd9rtAH8AFJXSYdlC/1lLGc0G1EC2XuywC6Lek01AHHsVZf vagrant";
+    }
+    login {
+        user lab {
+            uid 2001;
+            class super-user;
+            authentication {
+                encrypted-password "$1$5dcoGq3x$.tmzXkl4fGzTpjHkOSMIU.";
+            }
+        }
+        user vagrant {
+            uid 2000;
+            class super-user;
+            authentication {
+                ssh-rsa "ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEA6NF8iallvQVp22WDkTkyrtvp9eWW6A8YVr+kz4TjGYe7gHzIw+niNltGEFHzD8+v1I2YJ6oXevct1YeS0o9HZyN1Q9qgCgzUFtdOKLv6IedplqoPkcmF0aYet2PkEDo3MlTBckFXPITAMzF8dJSIFo9D8HfdOV0IAdx4O7PtixWKn5y2hMNG0zQPyUecp4pzC6kivAIhyfHilFR61RGL+GPXQ2MWZWFYbAGjyiYJnAmCP3NOTd0jMZEnDkbUvxhMmBYSdETk1rRgm+R4LOzFUGaHqHDLKLX+FIPKcF96hrucXzcWyLbIbEgE98OHlnVYCzRdK8jlqm8tehUc9c9WhQ== vagrant insecure public key";
+            }
+        }
+    }
+    services {
+        ssh {
+            root-login allow;
+        }
+        netconf {
+            ssh;
+            traceoptions {
+                file nc.txt size 1m world-readable;
+                flag incoming;
+            }
+        }
+        web-management {
+            http {
+                interface ge-0/0/0.0;
+            }
+        }
+    }
+    syslog {
+        user * {
+            any emergency;
+        }
+        file messages {
+            any any;
+            authorization info;
+        }
+        file interactive-commands {
+            interactive-commands any;
+        }
+    }
+    license {
+        autoupdate {
+            url https://ae1.juniper.net/junos/key_retrieval;
+        }
+    }
+}
+interfaces {
+    ge-0/0/0 {
+        unit 0 {
+            family inet {
+                dhcp;
+            }
+        }
+    }
+    ge-0/0/1 {
+        description "OOB to Ansible Host";
+        unit 0 {
+            family inet {
+                filter {
+                    input drop-icmp;
+                }
+                address 192.10.1.103/24;
+            }
+        }
+    }
+    ge-0/0/2 {
+        description vsrx3--ge-0/0/2__vsrx1--ge-0/0/3;
+        unit 0 {
+            family inet {
+                address 172.10.13.3/24;
+            }
+            family mpls;
+        }
+    }
+    ge-0/0/3 {
+        description vsrx3--ge-0/0/3__vsrx2--ge-0/0/3;
+        unit 0 {
+            family inet {
+                address 172.10.23.3/24;
+            }
+            family mpls;
+        }
+    }
+    lo0 {
+        unit 0 {
+            family inet {
+                address 10.100.3.3/32;
+            }
+        }
+    }
+}
+routing-options {
+    router-id 10.100.3.3;
+    autonomous-system 65000;
+}
+protocols {
+    mpls {
+        interface ge-0/0/2.0;
+        interface ge-0/0/3.0;
+    }
+    bgp {
+        group Core-RR {
+            type internal;
+            local-address 10.100.3.3;
+            family inet {
+                unicast;
+            }
+            family inet-vpn {
+                unicast;
+            }
+            neighbor 10.100.1.1;
+            neighbor 10.100.2.2;
+        }
+    }
+    ospf {
+        area 0.0.0.0 {
+            interface ge-0/0/2.0 {
+                interface-type p2p;
+                metric 100;
+            }
+            interface ge-0/0/3.0 {
+                interface-type p2p;
+                metric 100;
+            }
+            interface lo0.0 {
+                passive;
+            }
+        }
+    }
+    ldp {
+        interface ge-0/0/2.0;
+        interface ge-0/0/3.0;
+        interface lo0.0;
+    }
+    lldp {
+        interface ge-0/0/2.0;
+        interface ge-0/0/3.0;
+    }
+}
+security {
+    forwarding-options {
+        family {
+            inet6 {
+                mode packet-based;
+            }
+            mpls {
+                mode packet-based;
+            }
+            iso {
+                mode packet-based;
+            }
+        }
+    }
+}
+firewall {
+    family inet {
+        filter drop-icmp {
+            term nms {
+                from {
+                    source-address {
+                        192.10.1.0/24;
+                    }
+                    destination-address {
+                        192.10.1.103/32;
+                    }
+                }
+                then accept;
+            }
+            term reject {
+                then {
+                    discard;
+                }
+            }
+        }
+    }
+}

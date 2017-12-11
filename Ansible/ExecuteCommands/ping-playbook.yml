@@ -15,5 +15,3 @@
       failed_when: "show.output[0]['rpc-reply']['ping-results']['ping-failure'] is defined"
       ignore_errors: yes
   
-    - debug: var={{ item }}.output[0]['rpc-reply']
-      with_items: "{{show.results}}"
