@@ -2,10 +2,13 @@
 # Nodes in the network
 #
 
+
+
 ---
 
 common:
     bgp_asn: 65000
+    [u'vSRX2', u'vSRX3', u'vSRX3']
 
 nodes:
 
@@ -33,6 +36,7 @@ nodes:
     links:
       ge-0/0/2: { ip: 172.10.12.2, remote: vSRX1 , cost: 10 }
       ge-0/0/3: { ip: 172.10.23.2, remote: vSRX3 , cost: 10 }
+      lt-0/0/0: { ip: 192.10.1.1, remote: ce1  }
     bgp:
        internal:
          peers:
@@ -40,6 +44,10 @@ nodes:
          af:
             - inet
             - inet-vpn
+      ebgp:
+        peers:
+            ce1: { ip: 192.10.1.2, as: 65001 }
+            
     ospf:
         network: p2p
 
@@ -49,6 +57,7 @@ nodes:
     links:
       ge-0/0/2: { ip: 172.10.13.3, remote: vSRX1 , cost: 10 }
       ge-0/0/3: { ip: 172.10.23.3, remote: vSRX2 , cost: 10 }
+      lt-0/0/0: { ip: 192.10.2.1, remote: ce2  }
     bgp:
        internal:
          peers:
@@ -56,6 +65,11 @@ nodes:
          af:
             - inet
             - inet-vpn
+      ebgp:
+        peers:
+            ce2: { ip: 192.10.2.2, as: 65002 }
+            ce3: { ip: 192.10.3.2, as: 65003 }
+            
     ospf:
         network: p2p
 

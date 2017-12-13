@@ -1,0 +1,40 @@
+---
+
+common:
+  bgp_asn: 65000
+
+nodes:
+  - name: vSRX1
+    mgmt: 192.10.1.101
+    rid: 10.100.1.1
+
+  - name: vSRX2
+    mgmt: 192.10.1.102
+    rid: 10.100.2.2
+    
+  - name: vSRX3
+    mgmt: 192.10.1.103
+    rid: 10.100.3.3
+
+links:
+  - {left: vSRX2, left_port: lt-0/0/0, left_ip: 192.10.1.1, external: true,
+      right: ce1, right_port: lt-0/0/0, right_ip: 192.10.1.2, vlan: 10 }
+
+  - {left: vSRX3, left_port: lt-0/0/0, left_ip: 192.10.2.1, external: true,
+      right: ce2, right_port: lt-0/0/0, right_ip: 192.10.2.2, vlan: 20 }
+
+  - {left: vSRX3, left_port: lt-0/0/0, left_ip: 192.10.3.1, external: true,
+      right: ce2, right_port: lt-0/0/0, right_ip: 192.10.3.2, vlan: 30 }
+
+bgp:
+  af:
+    - inet
+  ebgp:
+    - {name: ce1, ip: 192.10.1.2, as: 65001, local: vSRX2 }
+    - {name: ce2, ip: 192.10.2.2, as: 65002, local: vSRX3 }
+    - {name: ce3, ip: 192.10.3.2, as: 65003, local: vSRX3 }
+
+
+
+  
+  

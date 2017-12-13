@@ -8,6 +8,7 @@
   tasks:
   - name: Create per-node data model from fabric data model
     template: src=core-to-nodes.j2 dest=./nodes.yml
+  - debug: var=vars
 
 #  - debug: var=vars
 

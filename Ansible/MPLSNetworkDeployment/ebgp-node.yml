@@ -1,0 +1,37 @@
+#
+# Nodes in the network
+#
+
+
+
+---
+
+common:
+    bgp_asn: 65000
+
+nodes:
+
+  vSRX2:
+    mgmt: 192.10.1.102
+    rid:  10.100.2.2
+    links:
+      lt-0/0/0.10 : { ip: 192.10.1.1, remote: ce1, vlan: 10  }
+    bgp:
+      ebgp:
+        peers:
+            ce1: { ip: 192.10.1.2, as: 65001 }
+            
+
+  vSRX3:
+    mgmt: 192.10.1.103
+    rid:  10.100.3.3
+    links:
+      lt-0/0/0.20 : { ip: 192.10.2.1, remote: ce2, vlan: 20  }
+      lt-0/0/0.30 : { ip: 192.10.3.1, remote: ce2, vlan: 30  }
+    bgp:
+      ebgp:
+        peers:
+            ce2: { ip: 192.10.2.2, as: 65002 }
+            ce3: { ip: 192.10.3.2, as: 65003 }
+            
+

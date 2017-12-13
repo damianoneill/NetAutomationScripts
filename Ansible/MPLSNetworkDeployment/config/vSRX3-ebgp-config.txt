@@ -1,0 +1,41 @@
+
+interfaces {
+    lt-0/0/0 {
+        description "ce2"
+        unit 20 {
+            vlan-id 20;
+            family inet {
+                address 192.10.2.1/30
+            }
+        }
+    }   
+    lt-0/0/0 {
+        description "ce2"
+        unit 30 {
+            vlan-id 30;
+            family inet {
+                address 192.10.3.1/30
+            }
+        }
+    }   
+}
+protocols {
+    bgp {
+        group ce3 {
+            type external;
+            local-address 10.100.3.3;
+            family inet {               
+                unicast;
+            }
+            neighbor 192.10.3.2;
+            peer-as 65003
+        group ce2 {
+            type external;
+            local-address 10.100.3.3;
+            family inet {               
+                unicast;
+            }
+            neighbor 192.10.2.2;
+            peer-as 65002
+        }
+    }

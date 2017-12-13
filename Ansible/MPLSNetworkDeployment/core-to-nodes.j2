@@ -4,10 +4,18 @@
 {% macro internal_link(name,ip,cost,remote) %}
 {{ name }}: { ip: {{ip}}, remote: {{remote}} {% if cost %}, cost: {{cost}}{% endif %} }{% endmacro %}
 
+{% macro ebgp_peer(name,ip,as) %}
+{{ name }}: { ip: {{ip}}, as: {{as}} }{% endmacro %}
+
+{% if bgp.ebgp is defined %}
+{% set ebgp_nodes = bgp.ebgp|map(attribute='local')|list  %}
+{% endif %}
+
 ---
 
 common:
     bgp_asn: {{ common.bgp_asn }}
+    {{ ebgp_nodes }}
 
 nodes:
 {% for node in nodes %}
@@ -23,7 +31,7 @@ nodes:
       {{ internal_link(link.right_port,link.right_ip, link.cost|default(''),link.left) }}
 {%     endif %}
 {%   endfor %}
-{%   if bgp is defined %}
+{%  if bgp is defined %}
     bgp:
        internal:
 {%       if node.rid in bgp.rr  %}
@@ -42,7 +50,14 @@ nodes:
 {%          for af in bgp.af %}
             - {{ af }}
 {%          endfor %}
-{%   endif %}
+{%    if bgp.ebgp is defined and node.name in ebgp_nodes %}
+      ebgp:
+        peers:
+{%          for peer in bgp.ebgp if node.name in peer.local  %}
+            {{ ebgp_peer(peer.name,peer.ip,peer.as)}}
+{%          endfor %}            
+{%    endif %}
+{%  endif %}
 {%   if ospf is defined %}
     ospf:
         network: {{ospf.network}}
