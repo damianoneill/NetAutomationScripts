@@ -1,0 +1,43 @@
+
+interfaces {
+    ge-0/0/4 {
+        description "ce1"
+        vlan-tagging;
+        encapsulation flexible-ethernet-services;
+        unit 10 {
+            vlan-id 10;
+            family inet {
+                address 192.168.1.1/30
+            }
+        }
+    }   
+}
+protocols {
+    bgp {
+        group ce1 {
+            type external;
+            family inet {               
+                unicast;
+            }
+            neighbor 192.168.1.2;
+            peer-as 65001;
+            import __ANSIBLE_ce1_import;
+        }
+    }
+}
+
+policy-options {
+    policy-statement __ANSIBLE_ce1_import {
+        term ce1_routes {
+            from {
+                protocol bgp;
+                route-filter 192.200.1.0/24 exact;
+                route-filter 192.200.10.0/24 exact;
+            }
+            then accept;
+        }
+        term reject {
+            then reject;
+        }
+    }
+}

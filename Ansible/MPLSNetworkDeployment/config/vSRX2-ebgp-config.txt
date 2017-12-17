@@ -1,11 +1,11 @@
 
 interfaces {
-    lt-0/0/0 {
+    ge-0/0/4 {
         description "ce1"
         unit 10 {
             vlan-id 10;
             family inet {
-                address 192.10.1.1/30
+                address 192.168.1.1/30
             }
         }
     }   
@@ -14,11 +14,10 @@ protocols {
     bgp {
         group ce1 {
             type external;
-            local-address 10.100.2.2;
             family inet {               
                 unicast;
             }
-            neighbor 192.10.1.2;
+            neighbor 192.168.1.2;
             peer-as 65001
         }
     }

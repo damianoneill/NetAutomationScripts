@@ -4,8 +4,18 @@
 {% macro external_link(name,ip,remote,vlan) %}
 {{ name }}.{{vlan}} : { ip: {{ip}}, remote: {{remote}}, vlan: {{ vlan }}  }{% endmacro %}
 
-{% macro ebgp_peer(name,ip,as) %}
-{{ name }}: { ip: {{ip}}, as: {{as}} }{% endmacro %}
+{#{% macro ebgp_peer(name,ip,as,prefix) %}
+{{ name }}: { ip: {{ip}}, as: {{as}}, prefix: {{prefix|first}} }{% endmacro %}#}
+
+{% macro ebgp_peer(name,ip,as,prefix) %}
+{{ name }}:  
+                ip: {{ip}} 
+                as: {{as}} 
+                prefix:
+{%              for p in prefix %}
+                    - {{p}}
+{%              endfor %}
+{% endmacro %}
 
 {% set ebgp_nodes = bgp.ebgp|map(attribute='local')|list  %}
 
@@ -33,7 +43,7 @@ nodes:
       ebgp:
         peers:
 {%          for peer in bgp.ebgp if node.name in peer.local  %}
-            {{ ebgp_peer(peer.name,peer.ip,peer.as)}}
+            {{ ebgp_peer(peer.name,peer.ip,peer.as,peer.prefix)}}
 {%          endfor %}            
 {%    endif %}
 {% endfor %}

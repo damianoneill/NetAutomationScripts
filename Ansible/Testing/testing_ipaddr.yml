@@ -1,0 +1,15 @@
+---
+
+- hosts: localhost
+  name: Create node data model
+  gather_facts: no
+  vars:
+    prefix: 192.168.1.240/24
+  tasks:
+    #- debug: msg={{ interfaces|append_str('.0')}}
+#    - set_fact:
+
+    - debug: msg={{ prefix|ipaddr('address')}}
+    - debug: msg={{ prefix|ipaddr('network')}}
+    - debug: msg={{ prefix|ipaddr('netmask')}}
+    - debug: msg={{ prefix|ipaddr(-2)}}

@@ -1,0 +1,43 @@
+---
+
+- name: Validate BGP and LLDP
+  gather_facts: no
+  connection: local
+  hosts: all
+  tags: [ validate ]
+  tasks:
+  - name: GET BGP and LLDP output
+    napalm_get_facts:
+      hostname: "{{ inventory_hostname }}"
+      username: "{{ ansible_user }}"
+      dev_os: "{{dev_os}}"
+      password: "{{ ansible_ssh_pass }}"
+      filter: 
+        - route_to
+#        - bgp_neighbors
+#        - interfaces_ip
+      args:
+        route_to:
+          destination: 192.200.1.0/24
+    when: dev_os == "junos"
+    register: output
+  
+  - debug: var=output
+
+  - name: Validate BGP
+    napalm_validate:
+      hostname: "{{ inventory_hostname }}"
+      username: "{{ ansible_user }}"
+      dev_os: "{{dev_os}}"
+      password: "{{ ansible_ssh_pass }}"
+      validation_file: bgp_validation.yml
+    register: report
+
+  - debug: var=report
+
+
+#  - name: send output to YAML filte
+#    copy:
+#      content:  "{{hostvars[item].napalm_bgp_neighbors|to_nice_yaml (indent=4)}}"
+#      dest: "./{{inventory_hostname}}-bgp_summary.yml"
+#    with_list: "{{play_hosts}}"

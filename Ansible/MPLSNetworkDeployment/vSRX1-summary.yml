@@ -1,0 +1,50 @@
+ge-0/0/0.0:
+    ipv4:
+        10.0.2.15:
+            prefix_length: 24
+ge-0/0/1.0:
+    ipv4:
+        192.10.1.101:
+            prefix_length: 24
+ge-0/0/2.0:
+    ipv4:
+        172.10.12.1:
+            prefix_length: 24
+ge-0/0/3.0:
+    ipv4:
+        172.10.13.1:
+            prefix_length: 24
+ge-0/0/4.40:
+    ipv4:
+        172.10.14.1:
+            prefix_length: 24
+lo0.0:
+    ipv4:
+        10.100.1.1:
+            prefix_length: 32
+lo0.16384:
+    ipv4:
+        127.0.0.1:
+            prefix_length: 32
+lo0.16385:
+    ipv4:
+        10.0.0.1:
+            prefix_length: 32
+        10.0.0.16:
+            prefix_length: 32
+        128.0.0.1:
+            prefix_length: 32
+        128.0.0.4:
+            prefix_length: 32
+        128.0.1.16:
+            prefix_length: 32
+sp-0/0/0.16383:
+    ipv4:
+        10.0.0.1:
+            prefix_length: 32
+        10.0.0.6:
+            prefix_length: 32
+        128.0.0.1:
+            prefix_length: 32
+        128.0.0.6:
+            prefix_length: 32

@@ -10,6 +10,8 @@ interfaces {
     {{ intf.split('.')[0] }} {
         description "{{intf_attr.remote}}"
 {%      if intf_attr.vlan  is defined %}
+        vlan-tagging;
+        encapsulation flexible-ethernet-services;
         unit {{intf_attr.vlan}} {
             vlan-id {{intf_attr.vlan}};
             family inet {
@@ -30,12 +32,33 @@ protocols {
 {%      for peer, peer_attr in node.bgp.ebgp.peers.items() %}
         group {{peer}} {
             type external;
-            local-address {{ node.rid}};
+{#            local-address {{ node.rid}};#}
             family inet {               
                 unicast;
             }
             neighbor {{ peer_attr.ip }};
-            peer-as {{peer_attr.as}}
+            peer-as {{peer_attr.as}};
+            import __ANSIBLE_{{peer}}_import;
+        }
 {%      endfor %}
+    }
+}
+
+policy-options {
+{%  for peer, peer_attr in node.bgp.ebgp.peers.items() %}
+    policy-statement __ANSIBLE_{{peer}}_import {
+        term {{peer}}_routes {
+            from {
+                protocol bgp;
+{%              for prefix in  peer_attr.prefix if peer_attr.prefix is sequence %}
+                route-filter {{prefix}} exact;
+{%              endfor %}
+            }
+            then accept;
+        }
+        term reject {
+            then reject;
         }
     }
+{%  endfor %}
+}

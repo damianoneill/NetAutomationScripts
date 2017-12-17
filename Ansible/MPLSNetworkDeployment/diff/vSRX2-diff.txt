@@ -1,0 +1,16 @@
+[edit protocols bgp group ce1]
++    import __ANSIBLE_ce1_import;
+[edit policy-options]
++   policy-statement __ANSIBLE_ce1_import {
++       term ce1_routes {
++           from {
++               protocol bgp;
++               route-filter 192.200.1.0/24 exact;
++               route-filter 192.200.10.0/24 exact;
++           }
++           then accept;
++       }
++       term reject {
++           then reject;
++       }
++   }

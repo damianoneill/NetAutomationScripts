@@ -9,10 +9,11 @@
       napalm_get_facts:
         hostname: "{{ inventory_hostname }}"
         username: "{{ ansible_user }}"
-        dev_os: junos
+        dev_os: iosxr
         password: "{{ ansible_ssh_pass }}"
         filter: 
           - lldp_neighbors
           - bgp_neighbors
+          - interfaces_ip
 
     - debug: var=vars

@@ -1,40 +1,35 @@
 
 interfaces {
-    ge-0/0/3 {
-        description "vSRX2"
-        unit 0 {
-            family inet {
-                address 172.10.23.3/24
-            }
-        }
-    }
-   
-    ge-0/0/2 {
+    G0/0/0/0 {
         description "vSRX1"
-        unit 0 {
+        vlan-tagging;
+        encapsulation flexible-ethernet-services;
+        unit 40 {
+            vlan-id 40;
             family inet {
-                address 172.10.13.3/24
+                address 172.10.14.4/24
             }
+            family mpls;
         }
     }
    
     lo0 {
         unit 0 {
             family inet {
-                address 10.100.3.3/32;
+                address 10.100.4.4/32;
             }
         }
     }
 }
 routing-options {
-    router-id 10.100.3.3;
+    router-id 10.100.4.4;
     autonomous-system 65000;
 }
 protocols {
     bgp {
         group Core {
             type internal;
-            local-address 10.100.3.3;
+            local-address 10.100.4.4;
             family inet {               
                 unicast;
             }
@@ -46,11 +41,7 @@ protocols {
     }
     ospf {
         area 0 {
-            interface ge-0/0/2.0 {
-                interface-type p2p;
-                metric 10;
-            }
-            interface ge-0/0/3.0 {
+            interface G0/0/0/0.40 {
                 interface-type p2p;
                 metric 10;
             }
@@ -60,20 +51,16 @@ protocols {
         }
     }
     ldp {
-        interface ge-0/0/2.0 ;
-        interface ge-0/0/3.0 ;
+        interface G0/0/0/0.40 ;
         interface lo0.0;
     }
     rsvp {
-        interface ge-0/0/2.0 ;
-        interface ge-0/0/3.0 ;
+        interface G0/0/0/0.40 ;
     }
     mpls {
-        interface ge-0/0/2.0 ;
-        interface ge-0/0/3.0 ;
+        interface G0/0/0/0.40 ;
     }
     lldp {
-        interface ge-0/0/2.0 ;
-        interface ge-0/0/3.0 ;
+        interface G0/0/0/0.0 ;
     }
 }

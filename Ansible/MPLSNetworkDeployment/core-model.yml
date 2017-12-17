@@ -30,7 +30,7 @@ links:
   - {left: vSRX2, left_port: ge-0/0/3, left_ip: 172.10.23.2,
       right: vSRX3, right_port: ge-0/0/3, right_ip: 172.10.23.3, cost: 10 }
 
-  - {left: vSRX1, left_port: ge-0/0/4, left_ip: 172.10.14.1,
+  - {left: vSRX1, left_port: ge-0/0/4, left_ip: 172.10.14.1, vlan: 40,
       right: XR4, right_port: G0/0/0/0, right_ip: 172.10.14.4, cost: 10 }
 
 bgp:

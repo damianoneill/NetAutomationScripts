@@ -8,7 +8,7 @@
   tasks:
   - name: Create per-node data model from fabric data model
     template: src=core-to-nodes.j2 dest=./nodes.yml
-  - debug: var=vars
+#  - debug: var=vars
 
 #  - debug: var=vars
 
@@ -44,15 +44,16 @@
     napalm_get_facts:
       hostname: "{{ inventory_hostname }}"
       username: "{{ ansible_user }}"
-      dev_os: junos
+      dev_os: "{{dev_os}}"
       password: "{{ ansible_ssh_pass }}"
       filter: 
         - lldp_neighbors
         - bgp_neighbors
+        - interfaces_ip
 
-  #- debug: var=lldp_output
+  - debug: var=vars
 
-  - name: Validating LLDP and BGP
+  - name: Setting Variables for Validation
     include_vars: nodes.yml
   - set_fact: node={{nodes[inventory_hostname]}}
   - set_fact: core_intf={{node.links.keys()|append_str('.0')}}
@@ -62,12 +63,15 @@
 #  - debug:  var=core_intf
 #  - debug: var=core_intf|difference(lldp_intf)|length
 
-  - assert:
+  - name: Validate LLDP
+    assert:
       that: core_intf|difference(lldp_intf)|length == 0
       msg:  |
         LLDP is not enabled on some fabric interfaces on {{inventory_hostname}}
+    ignore_errors: true
 
-  - assert:
+  - name: Validate BGP
+    assert:
       that: napalm_bgp_neighbors.global.peers[item].is_up == true
       msg: "Neighbor {{item}} is not operational"
     with_list: "{{node.bgp.internal.peers}}"

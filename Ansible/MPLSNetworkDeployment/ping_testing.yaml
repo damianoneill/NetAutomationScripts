@@ -1,0 +1,27 @@
+---
+- name: ping to remote detinations
+  gather_facts: no
+  connection: local
+  hosts: all
+  tags: [ ping ]
+  tasks:
+  - name: Ping to remote destinations
+    napalm_ping:
+      hostname: "{{ inventory_hostname }}"
+      username: "{{ ansible_user }}"
+      dev_os: "{{dev_os}}"
+      password: "{{ ansible_ssh_pass }}"
+      destination: "{{item}}"
+    with_list: "{{ping_target}}"
+    when: dev_os == "junos"
+    register: test
+  
+
+  - name: ping on the IOS_XR
+    iosxr_command:
+      commands: ping {{item}}
+    with_list: "{{ping_target}}" 
+    when: dev_os == "iosxr"
+    register: iosxr_ping
+
+  - debug: var=iosxr_ping
