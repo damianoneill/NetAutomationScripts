@@ -205,7 +205,7 @@ protocols {
     }
     lldp {
 {%      for intf, intf_attr in node.links.items()|sort %}
-        interface {{intf}};
+        interface {{intf.split('.')[0]}};
 {%      endfor %}
     }
 }
