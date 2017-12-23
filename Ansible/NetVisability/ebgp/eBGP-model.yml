@@ -1,0 +1,40 @@
+---
+
+common:
+  bgp_asn: 65000
+
+nodes:
+  - name: MX2
+    mgmt: 192.10.1.102
+    rid: 10.100.2.2
+
+  - name: MX3
+    mgmt: 192.10.1.103
+    rid: 10.100.3.3
+    
+  - name: MX4
+    mgmt: 192.10.1.104
+    rid: 10.100.4.4
+
+links:
+  - {left: MX2, left_port: ge-0/0/2, left_ip: 10.200.1.1, external: true,
+      right: as100, right_port: ge-0/0/1, right_ip: 10.200.1.2, vlan: 10 }
+
+  - {left: MX3, left_port: ge-0/0/2, left_ip: 10.200.2.1, external: true,
+      right: as200, right_port: ge-0/0/2, right_ip: 10.200.2.2, vlan: 20 }
+
+  - {left: MX4, left_port: ge-0/0/2, left_ip: 10.200.3.1, external: true,
+      right: as300, right_port: ge-0/0/3, right_ip: 10.200.3.2, vlan: 30 }
+
+bgp:
+  af:
+    - inet
+  ebgp:
+    - {name: as100, ip: 10.200.1.2, as: 100, local: MX2, prefix: ['192.200.1.0/24','192.200.10.0/24'] }
+    - {name: as200, ip: 10.200.2.2, as: 200, local: MX3, prefix: ['192.200.2.0/24'] }
+    - {name: as300, ip: 10.200.3.2, as: 300, local: MX4, prefix: ['192.200.3.0/24','192.200.30.0/24'] }
+
+
+
+  
+  

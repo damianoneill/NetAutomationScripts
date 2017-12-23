@@ -1,0 +1,50 @@
+#
+# Nodes in the network
+#
+{% macro external_link(name,ip,remote,vlan) %}
+{{ name }}.{{vlan}} : { ip: {{ip}}, remote: {{remote}}, vlan: {{ vlan }}  }{% endmacro %}
+
+{#{% macro ebgp_peer(name,ip,as,prefix) %}
+{{ name }}: { ip: {{ip}}, as: {{as}}, prefix: {{prefix|first}} }{% endmacro %}#}
+
+{% macro ebgp_peer(name,ip,as,prefix) %}
+{{ name }}:  
+                ip: {{ip}} 
+                as: {{as}} 
+                prefix:
+{%              for p in prefix %}
+                    - {{p}}
+{%              endfor %}
+{% endmacro %}
+
+{% set ebgp_nodes = bgp.ebgp|map(attribute='local')|list  %}
+
+---
+
+common:
+    bgp_asn: {{ common.bgp_asn }}
+
+nodes:
+{% for node in nodes if node.name in ebgp_nodes %}
+
+  {{ node.name }}:
+    mgmt: {{ node.mgmt }}
+    rid:  {{ node.rid }}
+    links:
+{%   for link in links %}
+{%     if link.left == node.name %}
+      {{ external_link(link.left_port,link.left_ip,link.right,link.vlan) }}
+{%     elif link.right == node.name %}
+      {{ external_link(link.right_port,link.right_ip,link.left,link.vlan) }}
+{%     endif %}
+{%   endfor %}
+    bgp:
+{%    if node.name in ebgp_nodes %}
+      ebgp:
+        peers:
+{%          for peer in bgp.ebgp if node.name in peer.local  %}
+            {{ ebgp_peer(peer.name,peer.ip,peer.as,peer.prefix)}}
+{%          endfor %}            
+{%    endif %}
+{% endfor %}
+
