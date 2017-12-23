@@ -1,15 +1,11 @@
 
 interfaces {
-    ge-0/0/4 {
-        description "XR4"
-        vlan-tagging;
-        encapsulation flexible-ethernet-services;
-        unit 40 {
-            vlan-id 40;
+    ge-0/0/2 {
+        description "vSRX2"
+        unit 0 {
             family inet {
-                address 172.10.14.1/24
+                address 172.10.12.1/24
             }
-            family mpls;
         }
     }
    
@@ -22,12 +18,16 @@ interfaces {
         }
     }
    
-    ge-0/0/2 {
-        description "vSRX2"
-        unit 0 {
+    ge-0/0/4 {
+        description "XR4"
+        vlan-tagging;
+        encapsulation flexible-ethernet-services;
+        unit 40 {
+            vlan-id 40;
             family inet {
-                address 172.10.12.1/24
+                address 172.10.14.1/24
             }
+            family mpls;
         }
     }
    
@@ -96,8 +96,8 @@ protocols {
         interface ge-0/0/4.40 ;
     }
     lldp {
-        interface ge-0/0/2.0 ;
-        interface ge-0/0/3.0 ;
-        interface ge-0/0/4.0 ;
+        interface ge-0/0/2 ;
+        interface ge-0/0/3 ;
+        interface ge-0/0/4 ;
     }
 }

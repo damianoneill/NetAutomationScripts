@@ -61,6 +61,6 @@ protocols {
         interface G0/0/0/0.40 ;
     }
     lldp {
-        interface G0/0/0/0.0 ;
+        interface G0/0/0/0 ;
     }
 }

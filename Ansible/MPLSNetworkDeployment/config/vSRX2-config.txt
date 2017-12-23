@@ -1,19 +1,19 @@
 
 interfaces {
-    ge-0/0/3 {
-        description "vSRX3"
-        unit 0 {
-            family inet {
-                address 172.10.23.2/24
-            }
-        }
-    }
-   
     ge-0/0/2 {
         description "vSRX1"
         unit 0 {
             family inet {
                 address 172.10.12.2/24
+            }
+        }
+    }
+   
+    ge-0/0/3 {
+        description "vSRX3"
+        unit 0 {
+            family inet {
+                address 172.10.23.2/24
             }
         }
     }
@@ -73,7 +73,7 @@ protocols {
         interface ge-0/0/3.0 ;
     }
     lldp {
-        interface ge-0/0/2.0 ;
-        interface ge-0/0/3.0 ;
+        interface ge-0/0/2 ;
+        interface ge-0/0/3 ;
     }
 }

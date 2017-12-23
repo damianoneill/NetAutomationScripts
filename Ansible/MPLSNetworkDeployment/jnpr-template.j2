@@ -6,10 +6,10 @@
 **************************************************
     #}
 interfaces {
-{% for intf,intf_attr in node.links.items() %}
-    {{ intf }} {
+{% for intf,intf_attr in node.links.items()|sort %}
+    {{ intf.split('.')[0] }} {
         description "{{intf_attr.remote}}"
-{%      if intf_attr.vlan  is defined %}
+{%      if intf_attr.vlan  is defined and intf_attr.vlan != 0 %}
         vlan-tagging;
         encapsulation flexible-ethernet-services;
         unit {{intf_attr.vlan}} {
@@ -99,7 +99,7 @@ protocols {
     ospf {
         area 0 {
 {%          for intf, intf_attr in node.links.items()|sort %}
-            interface {{ intf }}.{{intf_attr.vlan|default('0')}} {
+            interface {{ intf }} {
                 interface-type p2p;
 {%              if intf_attr.cost is defined %}
                 metric {{intf_attr.cost }};
@@ -120,7 +120,7 @@ protocols {
 {% if node.ldp is not defined  %}
     ldp {
 {%      for intf, intf_attr in node.links.items()|sort %}
-        interface {{intf}}.{{intf_attr.vlan|default('0')}} ;
+        interface {{intf}} ;
 {%      endfor %}
         interface lo0.0;
     }
@@ -133,7 +133,7 @@ protocols {
 {% if node.rsvp is not defined %}
     rsvp {
 {%      for intf, intf_attr in node.links.items()|sort %}
-        interface {{intf}}.{{intf_attr.vlan|default('0')}} ;
+        interface {{intf}} ;
 {%      endfor %}
     }
 {% endif %}
@@ -145,12 +145,12 @@ protocols {
 {#% In this loop if LDP is enabled then MPLS will be enabled also on this interface %#}
     mpls {
 {%      for intf, intf_attr in node.links.items()|sort %}
-        interface {{intf}}.{{intf_attr.vlan|default('0')}} ;
+        interface {{intf}} ;
 {%      endfor %}
     }
     lldp {
 {%      for intf, intf_attr in node.links.items()|sort %}
-        interface {{intf}}.{{0}} ;
+        interface {{intf.split('.')[0]}} ;
 {%      endfor %}
     }
 }

@@ -27,6 +27,8 @@ protocols {
     bgp {
         group ce3 {
             type external;
+            import __ANSIBLE_ce3_import;
+            export __ANSIBLE_ce3_export;
             family inet {               
                 unicast;
             }
@@ -36,6 +38,8 @@ protocols {
         }
         group ce2 {
             type external;
+            import __ANSIBLE_ce2_import;
+            export __ANSIBLE_ce2_export;
             family inet {               
                 unicast;
             }
@@ -60,11 +64,49 @@ policy-options {
             then reject;
         }
     }
+    policy-statement __ANSIBLE_ce3_export {
+        term ebgp_export {
+            from {
+                protocol bgp;
+                external;
+            }
+            then accept;
+        }
+        term default_route {
+            from {
+                protocol static;
+                route-filter 0.0.0.0/0 exact;
+            }
+            then accept;
+        }
+        term reject {
+            then reject;
+        }
+    }
     policy-statement __ANSIBLE_ce2_import {
         term ce2_routes {
             from {
                 protocol bgp;
                 route-filter 192.200.2.0/24 exact;
+            }
+            then accept;
+        }
+        term reject {
+            then reject;
+        }
+    }
+    policy-statement __ANSIBLE_ce2_export {
+        term ebgp_export {
+            from {
+                protocol bgp;
+                external;
+            }
+            then accept;
+        }
+        term default_route {
+            from {
+                protocol static;
+                route-filter 0.0.0.0/0 exact;
             }
             then accept;
         }

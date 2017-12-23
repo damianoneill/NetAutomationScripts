@@ -1,6 +1,6 @@
 ---
 
-- name: Validate BGP and LLDP
+- name: GET Route output
   gather_facts: no
   connection: local
   hosts: all
@@ -18,20 +18,31 @@
 #        - interfaces_ip
       args:
         route_to:
-          destination: 192.200.1.0/24
-    when: dev_os == "junos"
+          destination: "{{test_prefix}}"
+    #when: dev_os == "junos"
     register: output
   
-  - debug: var=output
+  - debug: var=hostvars[inventory_hostname]
+#  - debug: var=hostvars[inventory_hostname].napalm_route_to.keys()
 
-  - name: Validate BGP
-    napalm_validate:
+  - name: validate that the route is not present
+    assert:
+      that: test_prefix not in hostvars[inventory_hostname].napalm_route_to.keys()
+      msg:  route {{test_prefix}} is present on {{inventory_hostname}}
+
+
+- name: Validate BGP using Validation template
+  gather_facts: no
+  connection: local
+  hosts: all
+  tasks:
+  -  napalm_validate:
       hostname: "{{ inventory_hostname }}"
       username: "{{ ansible_user }}"
       dev_os: "{{dev_os}}"
       password: "{{ ansible_ssh_pass }}"
       validation_file: bgp_validation.yml
-    register: report
+     register: report
 
   - debug: var=report
 

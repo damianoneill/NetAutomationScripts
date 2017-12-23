@@ -2,7 +2,7 @@
 # Nodes in the network
 #
 {% macro internal_link(name,ip,cost,vlan,remote) %}
-{{ name }}: { ip: {{ip}}, remote: {{remote}} {% if cost %}, cost: {{cost}}{% endif %} {% if vlan %}, vlan: {{vlan}}{% endif %}}{% endmacro %}
+{{ name }}.{{vlan}}: { ip: {{ip}}, remote: {{remote}} {% if cost %}, cost: {{cost}}{% endif %} {% if vlan %}, vlan: {{vlan}}{% endif %}}{% endmacro %}
 
 {% macro ebgp_peer(name,ip,as) %}
 {{ name }}: { ip: {{ip}}, as: {{as}} }{% endmacro %}
@@ -25,9 +25,9 @@ nodes:
     links:
 {%   for link in links %}
 {%     if link.left == node.name %}
-      {{ internal_link(link.left_port,link.left_ip,link.cost|default(''),link.vlan|default(''),link.right) }}
+      {{ internal_link(link.left_port,link.left_ip,link.cost|default(''),link.vlan|default('0'),link.right) }}
 {%     elif link.right == node.name %}
-      {{ internal_link(link.right_port,link.right_ip, link.cost|default(''),link.vlan|default(''),link.left) }}
+      {{ internal_link(link.right_port,link.right_ip, link.cost|default(''),link.vlan|default('0'),link.left) }}
 {%     endif %}
 {%   endfor %}
 {%  if bgp is defined %}

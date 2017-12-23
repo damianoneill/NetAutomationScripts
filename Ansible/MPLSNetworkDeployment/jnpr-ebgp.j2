@@ -32,6 +32,8 @@ protocols {
 {%      for peer, peer_attr in node.bgp.ebgp.peers.items() %}
         group {{peer}} {
             type external;
+            import __ANSIBLE_{{peer}}_import;
+            export __ANSIBLE_{{peer}}_export;
 {#            local-address {{ node.rid}};#}
             family inet {               
                 unicast;
@@ -53,6 +55,25 @@ policy-options {
 {%              for prefix in  peer_attr.prefix if peer_attr.prefix is sequence %}
                 route-filter {{prefix}} exact;
 {%              endfor %}
+            }
+            then accept;
+        }
+        term reject {
+            then reject;
+        }
+    }
+    policy-statement __ANSIBLE_{{peer}}_export {
+        term ebgp_export {
+            from {
+                protocol bgp;
+                external;
+            }
+            then accept;
+        }
+        term default_route {
+            from {
+                protocol static;
+                route-filter 0.0.0.0/0 exact;
             }
             then accept;
         }
