@@ -22,15 +22,17 @@
 nodes:
 {% for node in nodes %}
   {{ node }}:
-{%  for vpn in vpns %}
-    links:
-{%   for link in links %}
-{%     if link.pe == node %}
-      {{ external_link(link.left_port,link.left_ip,link.vlan) }}
+{%  for vpn in vpn-services %}
+    {{ vpn.vpn-name }}:
+        rt: {{vpn.rt}}
+        rd: {{vpn.rd}}
+        sites:
+{%     for site in sites if vpn-attachemt.vpn-name == vpn.vpn-name %}
+          - links:   
+{%     for site in sites if vpn-attachemt.vpn-name == vpn.vpn-name %}
+{%     if site.pe == node %}
+      {{ external_link(site.interface,site.ip-connection.ipv4.prefix,site.vlan) }}
 {%     endif %}
+{%     endfor %}
 {%   endfor %}
-{%  for site in sites if site.routing.local == node %}
-    bgp:
-    {{ ebgp_peer(site.routing.ip,site.routing.as,site.routing.prefix) }}
-{%  endfor %}
 {% endfor %}

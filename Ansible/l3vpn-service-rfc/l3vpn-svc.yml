@@ -1,7 +1,7 @@
 ---
 
 vpn-service:
-  - vpn-id: 101
+    vpn-id: 101
     vpn-name: cust1
     vpn-service-topology: any-to-any
     rt: '100:1'
@@ -19,7 +19,5 @@ sites:
         asn: 100
         address-family: ipv4
         lan-subnets:
-          - 192.168.1.0/24     
-    vpn-attachment: 
-      vpn-name: cust1
+          - 192.168.1.0/24
 

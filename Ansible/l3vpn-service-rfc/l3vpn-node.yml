@@ -7,15 +7,9 @@ nodes:
     cust1:
       rt:
       rd:
-      links:
-        ge-0/0/3.10 : { ip: 192.100.1.1/30, vlan: 10  }
-      # routing:
-      #   bgp:
-      #       peer: 192.100.1.2
-      #       as: 65001
-      #       lan-prefix:
-      #       - 10.100.1.0/24
-
+      sites:
+      - ge-0/0/3.10 : { ip: 192.100.1.1/30, vlan: 10  }
+        bgp: {peer: xxx, as:xxx, prefix: 10.100.1.0/24}
 
   vSRX3:
     cust1:
