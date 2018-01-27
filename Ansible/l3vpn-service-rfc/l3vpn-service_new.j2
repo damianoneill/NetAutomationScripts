@@ -1,0 +1,36 @@
+{% macro external_link(intf,ip,vlan) %}
+{{ intf }}.{{vlan}} : { ip: {{ip}}, vlan: {{ vlan }}  }{% endmacro %}
+
+{% macro ebgp_peer(ip,as,prefix) %}
+    ip: {{ip}}
+        as: {{as}}
+        prefix:
+{%  for p in prefix %}
+        - {{p}}
+{%      endfor %}
+{% endmacro %}
+
+{% set nodes = sites|map(attribute='pe')|list  %}
+{% set vpns = vpn-services|map(attribute='vpn-name')|list  %}
+---
+
+# common:
+#     vrf_name: {{ common.customer_name }}
+#     rt: {{ common.rt|string }}
+#     rd: {{ common.rd }}
+
+nodes:
+{% for node in nodes %}
+  {{ node }}:
+{%  for vpn in vpns %}
+    links:
+{%   for link in links %}
+{%     if link.pe == node %}
+      {{ external_link(link.left_port,link.left_ip,link.vlan) }}
+{%     endif %}
+{%   endfor %}
+{%  for site in sites if site.routing.local == node %}
+    bgp:
+    {{ ebgp_peer(site.routing.ip,site.routing.as,site.routing.prefix) }}
+{%  endfor %}
+{% endfor %}

@@ -1,0 +1,12 @@
+
+{% set nodes = sites.links|map(attribute='pe')|list %}
+
+{% for node in nodes %}
+router {{node}} is in the list
+{% endfor %}
+
+{%for link in sites.links %}
+int: {{link.intf}}
+pe: {{link.pe}}
+ip: {{link.subnet|ipaddr(1)}}
+{% endfor %}

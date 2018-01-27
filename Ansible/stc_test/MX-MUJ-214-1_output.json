@@ -1,0 +1,93 @@
+-   rpc-reply:
+        software-information:
+            host-name: PE-AGGMX2K-muj-214-3-re0
+            junos-version: 15.1R5-S2.3
+            package-information:
+            -   comment: JUNOS OS Kernel 64-bit  [20160927.337663_builder_stable_10]
+                name: os-kernel
+            -   comment: JUNOS OS libs [20160927.337663_builder_stable_10]
+                name: os-libs
+            -   comment: JUNOS OS runtime [20160927.337663_builder_stable_10]
+                name: os-runtime
+            -   comment: JUNOS OS time zone information [20160927.337663_builder_stable_10]
+                name: zoneinfo
+            -   comment: JUNOS OS libs compat32 [20160927.337663_builder_stable_10]
+                name: os-libs-compat32
+            -   comment: JUNOS OS 32-bit compatibility [20160927.337663_builder_stable_10]
+                name: os-compat32
+            -   comment: JUNOS py base [20170310.080954_builder_junos_151_r5_s2]
+                name: py-base
+            -   comment: JUNOS OS crypto [20160927.337663_builder_stable_10]
+                name: os-crypto
+            -   comment: JUNOS network stack and utilities [20170310.080954_builder_junos_151_r5_s2]
+                name: netstack
+            -   comment: JUNOS libs compat32 [20170310.080954_builder_junos_151_r5_s2]
+                name: junos-libs-compat32
+            -   comment: JUNOS runtime [20170310.080954_builder_junos_151_r5_s2]
+                name: junos-runtime
+            -   comment: JUNOS Web Management Platform Package [20170310.080954_builder_junos_151_r5_s2]
+                name: jweb-ex
+            -   comment: JUNOS platform support [20170310.080954_builder_junos_151_r5_s2]
+                name: junos-platform
+            -   comment: JUNOS modules [20170310.080954_builder_junos_151_r5_s2]
+                name: junos-modules
+            -   comment: JUNOS libs [20170310.080954_builder_junos_151_r5_s2]
+                name: junos-libs
+            -   comment: JUNOS mtx Data Plane Crypto Support [20170310.080954_builder_junos_151_r5_s2]
+                name: junos-dp-crypto-support-platform
+            -   comment: JUNOS daemons [20170310.080954_builder_junos_151_r5_s2]
+                name: junos-daemons
+            -   comment: JUNOS Voice Services Container package [20170310.080954_builder_junos_151_r5_s2]
+                name: jservices-voice
+            -   comment: JUNOS Services SSL [20170310.080954_builder_junos_151_r5_s2]
+                name: jservices-ssl
+            -   comment: JUNOS Services Stateful Firewall [20170310.080954_builder_junos_151_r5_s2]
+                name: jservices-sfw
+            -   comment: JUNOS Services RPM [20170310.080954_builder_junos_151_r5_s2]
+                name: jservices-rpm
+            -   comment: JUNOS Services PTSP Container package [20170310.080954_builder_junos_151_r5_s2]
+                name: jservices-ptsp
+            -   comment: JUNOS Services NAT [20170310.080954_builder_junos_151_r5_s2]
+                name: jservices-nat
+            -   comment: JUNOS Services Mobile Subscriber Service Container package
+                    [20170310.080954_builder_junos_151_r5_s2]
+                name: jservices-mss
+            -   comment: JUNOS Services MobileNext Software package [20170310.080954_builder_junos_151_r5_s2]
+                name: jservices-mobile
+            -   comment: JUNOS Services LL-PDF Container package [20170310.080954_builder_junos_151_r5_s2]
+                name: jservices-llpdf
+            -   comment: JUNOS Services Jflow Container package [20170310.080954_builder_junos_151_r5_s2]
+                name: jservices-jflow
+            -   comment: JUNOS Services IPSec [20170310.080954_builder_junos_151_r5_s2]
+                name: jservices-ipsec
+            -   comment: JUNOS IDP Services [20170310.080954_builder_junos_151_r5_s2]
+                name: jservices-idp
+            -   comment: JUNOS Services HTTP Content Management package [20170310.080954_builder_junos_151_r5_s2]
+                name: jservices-hcm
+            -   comment: JUNOS Services Crypto [20170310.080954_builder_junos_151_r5_s2]
+                name: jservices-crypto-base
+            -   comment: JUNOS Services Captive Portal and Content Delivery Container
+                    package [20170310.080954_builder_junos_151_r5_s2]
+                name: jservices-cpcd
+            -   comment: JUNOS Services COS [20170310.080954_builder_junos_151_r5_s2]
+                name: jservices-cos
+            -   comment: JUNOS Border Gateway Function package [20170310.080954_builder_junos_151_r5_s2]
+                name: jservices-bgf
+            -   comment: JUNOS AppId Services [20170310.080954_builder_junos_151_r5_s2]
+                name: jservices-appid
+            -   comment: JUNOS Services Application Level Gateways [20170310.080954_builder_junos_151_r5_s2]
+                name: jservices-alg
+            -   comment: JUNOS Services AACL Container package [20170310.080954_builder_junos_151_r5_s2]
+                name: jservices-aacl
+            -   comment: JUNOS Packet Forwarding Engine Support (X2000) [20170310.080954_builder_junos_151_r5_s2]
+                name: jpfe-platform
+            -   comment: JUNOS Packet Forwarding Engine Support (M/T Common) [20170310.080954_builder_junos_151_r5_s2]
+                name: jpfe-common
+            -   comment: JUNOS Online Documentation [20170310.080954_builder_junos_151_r5_s2]
+                name: jdocs
+            -   comment: JUNOS jail runtime [20160927.337663_builder_stable_10]
+                name: jail-runtime
+            -   comment: JUNOS FIPS mode utilities [20170310.080954_builder_junos_151_r5_s2]
+                name: fips-mode
+            product-model: mx2020
+            product-name: mx2020

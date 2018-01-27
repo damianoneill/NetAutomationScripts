@@ -45,6 +45,7 @@ nodes:
 {%  endif %}
 {%   if ospf is defined %}
     ospf:
+        area: {{ospf.area}}
         network: {{ospf.network}}
 {%   endif %}
 {% endfor %}

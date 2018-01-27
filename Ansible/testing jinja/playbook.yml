@@ -1,0 +1,18 @@
+---
+- name: Create node data model
+  connection: local
+  hosts: all
+  gather_facts: no
+  tags: [ render ]
+  vars_files:
+  - "./data.yml"
+  tasks:
+  #- include_vars: "./data.yml"
+  - debug: var=vars
+
+  - name: Render the data
+    template: src=template.j2 dest=./{{inventory_hostname}}_data_render.yml
+
+
+
+

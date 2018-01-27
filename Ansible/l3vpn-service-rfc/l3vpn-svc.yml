@@ -1,0 +1,25 @@
+---
+
+vpn-service:
+  - vpn-id: 101
+    vpn-name: cust1
+    vpn-service-topology: any-to-any
+    rt: '100:1'
+    rd: '65000:1'
+
+sites:
+  - pe: vMX1
+    interface: ge-0/0/2
+    vlan: 10
+    ip-connection:
+      ipv4:
+        prefix: 10.10.1.0/30
+    routing-protocol:
+      bgp:
+        asn: 100
+        address-family: ipv4
+        lan-subnets:
+          - 192.168.1.0/24     
+    vpn-attachment: 
+      vpn-name: cust1
+

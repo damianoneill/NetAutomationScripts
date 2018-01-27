@@ -1,0 +1,65 @@
+
+---
+
+- name: Get JunOS Data
+  gather_facts: no
+  connection: local
+  tags: [junos]
+  hosts: all
+
+  tasks:
+    - name: Get JunOS bgp output
+      junos_command:
+        commands:
+          - show route table GI_SRX_3.inet.0 active-path detail
+          #- show route table GOM.inet.0 active-path detail
+          #- show version
+        display: xml
+       # provider:
+        #port: 22
+        # transport: cli
+      register: junos_output
+
+    #- debug: var=vars
+
+    - name: send output in YAML
+      copy:
+        content: "{{ junos_output.output|to_nice_yaml (indent=4) }}"
+        dest: "./{{inventory_hostname}}_output.yaml"
+      with_items: "{{ play_hosts}}"
+
+
+- name: Get IOSXR Data
+  gather_facts: no
+  connection: local
+  tags: [iosxr]
+  hosts: all
+  tasks:
+    - name: Get IOSXR bgp output
+      iosxr_command:
+        commands:
+          - show bgp summary
+      register: iosxr_output
+
+    - debug: var=iosxr_output
+
+
+- name: Get output from NAPALM
+  gather_facts: no
+  connection: local
+  hosts: all
+  tags: [ napalm ]
+  tasks:
+    - name: GET BGP output
+      napalm_get_facts:
+        hostname: "{{ inventory_hostname }}"
+        username: "{{ ansible_user }}"
+        dev_os: "{{dev_os}}"
+        password: "{{ ansible_ssh_pass }}"
+        filter: 
+          #- lldp_neighbors
+          - bgp_neighbors
+          #- interfaces_ip
+          #- interfaces
+
+    - debug: var=hostvars[inventory_hostname]

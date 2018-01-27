@@ -1,0 +1,30 @@
+- "<rpc-reply xmlns:junos=\"http://xml.juniper.net/junos/15.1R5/junos\">\n    <bgp-information\
+    \ xmlns=\"http://xml.juniper.net/junos/15.1R5/junos-routing\">\n        <group-count>10</group-count>\n\
+    \        <peer-count>11</peer-count>\n        <down-peer-count>0</down-peer-count>\n\
+    \        <bgp-rib junos:style=\"brief\">\n            <name>bgp.l3vpn.0</name>\n\
+    \            <total-prefix-count>136254</total-prefix-count>\n            <received-prefix-count>136254</received-prefix-count>\n\
+    \            <accepted-prefix-count>136254</accepted-prefix-count>\n         \
+    \   <active-prefix-count>68127</active-prefix-count>\n            <suppressed-prefix-count>0</suppressed-prefix-count>\n\
+    \            <history-prefix-count>0</history-prefix-count>\n            <damped-prefix-count>0</damped-prefix-count>\n\
+    \            <total-external-prefix-count>0</total-external-prefix-count>\n  \
+    \          <active-external-prefix-count>0</active-external-prefix-count>\n  \
+    \          <accepted-external-prefix-count>0</accepted-external-prefix-count>\n\
+    \            <suppressed-external-prefix-count>0</suppressed-external-prefix-count>\n\
+    \            <total-internal-prefix-count>136254</total-internal-prefix-count>\n\
+    \            <active-internal-prefix-count>68127</active-internal-prefix-count>\n\
+    \            <accepted-internal-prefix-count>136254</accepted-internal-prefix-count>\n\
+    \            <pending-prefix-count>0</pending-prefix-count>\n            <bgp-rib-state>BGP\
+    \ restart is complete</bgp-rib-state>\n            <vpn-rib-state>VPN restart\
+    \ is complete</vpn-rib-state>\n        </bgp-rib>\n        <bgp-rib junos:style=\"\
+    brief\">\n            <name>inet.3</name>\n            <total-prefix-count>3136</total-prefix-count>\n\
+    \            <received-prefix-count>3136</received-prefix-count>\n           \
+    \ <accepted-prefix-count>3136</accepted-prefix-count>\n            <active-prefix-count>803</active-prefix-count>\n\
+    \            <suppressed-prefix-count>0</suppressed-prefix-count>\n          \
+    \  <history-prefix-count>0</history-prefix-count>\n            <damped-prefix-count>0</damped-prefix-count>\n\
+    \            <total-external-prefix-count>0</total-external-prefix-count>\n  \
+    \          <active-external-prefix-count>0</active-external-prefix-count>\n  \
+    \          <accepted-external-prefix-count>0</accepted-external-prefix-count>\n\
+    \            <suppressed-external-prefix-count>0</suppressed-external-prefix-count>\n\
+    \            <total-internal-prefix-count>3136</total-internal-prefix-count>\n\
+    \            <active-internal-prefix-count>803</active-internal-prefix-count>\n\
+    \            <accepted-internal-prefix-count>3136</accepted-internal-prefix-count>"

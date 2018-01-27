@@ -1,0 +1,11 @@
+
+[junos]
+vSRX1   ansible_host=192.10.1.101
+vSRX2	ansible_host=192.10.1.102
+
+[junos:vars]
+ansible_user=lab
+ansible_ssh_pass=lab123
+dev_os=junos
+
+

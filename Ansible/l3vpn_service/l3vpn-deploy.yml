@@ -1,0 +1,147 @@
+---
+- hosts: localhost
+  name: Create node data model
+  gather_facts: no
+  tags: [ model ]
+  vars_files:
+  - "{{model|default('l3vpn-model_new.yml')}}"
+  tasks:
+  - name: Create per-node data model from fabric data model
+    template: src=l3vpn-service_new.j2 dest=./l3vpn-node.yml
+#  - debug: var=vars
+
+#  - debug: var=vars
+
+- name: Generate Configuration for all routers
+  gather_facts: no
+  connection: local
+  hosts: all
+  tags: [ template ]
+  tasks:
+    - include_vars: "./l3vpn-node.yml"
+    - file: path=config  state=directory
+      run_once: true
+    - name: Generate Configuration
+      template: src=./jnpr-l3vpn.j2 dest=config/{{inventory_hostname}}-l3vpn.txt
+      when: "inventory_hostname in nodes.keys()"
+
+- name: Validate BGP and LLDP
+  gather_facts: no
+  connection: local
+  hosts: all
+  tags: [ validate ]
+  tasks:
+
+#  - name: Deply LLD on all Routers
+#    junos_config:
+#      lines:
+#      - delete protocols lldp interface all
+
+#  - name: Wait for LLDP to start
+#    pause: seconds=10 prompt="Waiting for LLDP to start"
+#    when: wait_lldp is defined
+
+  - name: GET BGP and LLDP output
+    napalm_get_facts:
+      hostname: "{{ inventory_hostname }}"
+      username: "{{ ansible_user }}"
+      dev_os: "{{dev_os}}"
+      password: "{{ ansible_ssh_pass }}"
+      filter: 
+        #- lldp_neighbors
+        #- bgp_neighbors
+        #- interfaces_ip
+        - interfaces
+
+#   - debug: var=hostvars[inventory_hostname].napalm_interfaces_ip
+# #  - debug: var=hostvars[inventory_hostname].napalm_interfaces
+
+  - name: Setting Variables for Validation
+    include_vars: nodes.yml
+  - set_fact: node={{nodes[inventory_hostname]}}
+  - set_fact: core_intf={{node.links.keys()}}
+  #- set_fact: lldp_intf={{napalm_lldp_neighbors.keys()}}
+  #- debug: var=hostvars[inventory_hostname].napalm_lldp_neighbors
+  - debug: var=hostvars[inventory_hostname].napalm_interfaces
+# #  - debug:  var=napalm_bgp_neighbors
+# #  - debug:  var=core_intf
+# #  - debug: var=core_intf|difference(lldp_intf)|length
+#   # - debug: msg={{node.links[item].ip}}
+#   #   with_list: "{{node.links.keys()}}"
+
+#   # - debug: msg={{hostvars[inventory_hostname].napalm_interfaces_ip[item].ipv4.keys()}}
+#   #   with_list: "{{node.links.keys()}}"
+
+#   - name: Validate Interfaces has correct IP address
+#     assert:
+#       that: node.links[item].ip in hostvars[inventory_hostname].napalm_interfaces_ip[item].ipv4.keys()
+#       msg:  |
+#         Interface {{item}} has wrong IP address {{inventory_hostname}}
+#     with_list: "{{node.links.keys()}}"
+#     ignore_errors: true
+
+  - name: Validate all interfaces are operational
+    assert:
+      that: hostvars[inventory_hostname].napalm_interfaces[item.split('.')[0]].is_up == true
+      msg:  |
+        Interface {{item.split('.')[0]}} is down on {{inventory_hostname}}
+    with_list: "{{node.links.keys()}}"
+    ignore_errors: true
+
+  # - name: Validate LLDP with correct neigbour
+  #   assert:
+  #     that: node.links[item.key].remote == item.value[0].hostname
+  #     msg:  |
+  #       neigbour on {{item.key}} is not correct  on {{inventory_hostname}}
+  #   with_dict: "{{hostvars[inventory_hostname].napalm_lldp_neighbors}}"
+  #   ignore_errors: true
+
+  # - name: Validate LLDP
+  #   assert:
+  #     that: core_intf|difference(lldp_intf)|length == 0
+  #     msg:  |
+  #       LLDP is not enabled on some fabric interfaces on {{inventory_hostname}}
+  #   ignore_errors: true
+
+#   - name: Validate BGP
+#     assert:
+#       that: napalm_bgp_neighbors.global.peers[item].is_up == true
+#       msg: "Neighbor {{item}} is not operational"
+#     with_list: "{{node.bgp.internal.peers}}"
+
+#   - debug: msg={{nodes[item].rid}}
+#     with_list: "{{play_hosts}}"
+
+#   - name: Ping to remote destinations
+#     napalm_ping:
+#       hostname: "{{ inventory_hostname }}"
+#       username: "{{ ansible_user }}"
+#       dev_os: "{{dev_os}}"
+#       password: "{{ ansible_ssh_pass }}"
+#       destination: "{{nodes[item].rid}}"
+#     with_list: "{{play_hosts}}"
+#     when: dev_os == 'junos'
+#     register: ping_result
+
+# #  - debug: var=ping_result
+
+#   - name: Validate network reachability
+#     assert:
+#       that: item.results.success is defined
+#       msg: "{{item.item}} is not reachable to {{inventory_hostname}}"
+#     with_list: "{{hostvars[inventory_hostname].ping_result.results}}"
+#     # loop_control:
+#     #   label: "{{item.results}}"
+#     # no_log: true
+  
+
+
+      
+#  - assert:
+#      that: >
+#        napalm_lldp_neighbors[item.key]|map(attribute='hostname')|list|
+#        intersect(item.value.remote+common.suffix)|length > 0
+#      msg: "Neighbor {{item.value.remote}} is not present on {{item.key}}"
+#    with_dict: "{{node.links}}"
+
+

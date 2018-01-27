@@ -1,0 +1,42 @@
+---
+common:
+  customer_name: cust1
+  rt: '65000:1'
+  rd: '65000:1'
+
+nodes:
+  - name: vSRX1
+    mgmt: 192.10.1.101
+    rid: 10.100.1.1
+
+  - name: vSRX2
+    mgmt: 192.10.1.102
+    rid: 10.100.2.2
+    
+  - name: vSRX3
+    mgmt: 192.10.1.103
+    rid: 10.100.3.3
+
+
+
+links:
+
+- {pe: vSRX2, pe_port: ge-0/0/3, pe_ip: 192.100.1.1,
+   ce: ce1, ce_port: ge-0/0/1, ce_ip: 192.100.1.2, vlan: 10 }
+
+- {pe: vSRX3, pe_port: ge-0/0/3, pe_ip: 192.100.2.1,
+    ce: ce2, ce_port: ge-0/0/1, ce_ip: 192.100.2.2, vlan: 10 }
+
+sites:
+  - name: ce1
+    routing:
+      {ip: 192.100.1.2, as: 65001, prefix: [10.100.1.0/24]}
+
+  - name: ce2
+    routing:
+      {ip: 192.100.2.2, as: 65002, prefix: [10.100.2.0/24]}
+
+routing:
+  bgp:
+  - {site: ce1, ip: 192.100.1.2, as: 65001, prefix: [10.100.1.0/24]}
+  - {site: ce2, ip: 192.100.2.2, as: 65002, prefix: [10.100.2.0/24]}

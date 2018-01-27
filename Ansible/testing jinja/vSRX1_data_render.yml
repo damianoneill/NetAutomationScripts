@@ -1,0 +1,11 @@
+
+
+router as9k1 is in the list
+router asr9k2 is in the list
+
+int: ge-0/0/2
+pe: as9k1
+ip: 192.168.1.1/24
+int: ge-0/0/3
+pe: asr9k2
+ip: 192.168.2.1/24

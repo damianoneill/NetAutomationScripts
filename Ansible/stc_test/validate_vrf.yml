@@ -1,0 +1,39 @@
+---
+
+- name: Print all VRFs
+  gather_facts: no
+  connection: local
+  hosts: localhost
+  #vars_files:
+  #- "{{'validate_vrf.yml'}}"
+  tasks:
+  - include_vars: "vrf_test.yml"
+  - debug: msg={{ item }}
+    with_items: "{{ vrf }}"
+
+- name: Get info from JunOS Routers
+  gather_facts: no
+  connection: local
+  tags: [junos]
+  hosts: all
+  tasks:
+    - include_vars: "vrf_test.yml"
+    - name: Get JunOS bgp output
+      junos_command:
+        commands:
+          - show route table {{item}} active-path detail
+        display: xml
+      register: test_{{inventory_hostname}} 
+      with_items: "{{ vrf }}"
+      #register: test-{{inventory_hostname}}-{{item}}
+
+    - debug: var=test_{{inventory_hostname}} 
+      with_items: "{{ vrf }}"  
+      #- debug: var="test-{{inventory_hostname}}-{{item}}"
+      #with_items: "{{ vrf }}"
+
+#    - name: send output in JSON
+#      copy:
+#        content: "{{ output_{{inventory_hostname}}_{{item}}|to_nice_json }}"
+#        dest: "./{{inventory_hostname}}_{{item}}.json"
+#      with_items: "{{ vrf }}"
