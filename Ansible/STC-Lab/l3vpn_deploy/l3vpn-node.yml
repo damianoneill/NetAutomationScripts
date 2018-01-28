@@ -1,0 +1,30 @@
+
+
+---
+
+common:
+    vrf_name: cust1
+    rt: '65000:1'
+    rd: '65000:1'
+
+nodes:
+  vMX2:
+    - name: ce1
+      links:
+        ge-0/0/2.10 : { ip: 192.100.1.1, vlan: 10  }
+      bgp:
+        ip: 192.100.1.2
+        as: 65001
+        prefix:
+        - 10.100.1.0/24
+
+  vMX3:
+    - name: ce2
+      links:
+        ge-0/0/2.10 : { ip: 192.100.2.1, vlan: 10  }
+      bgp:
+        ip: 192.100.2.2
+        as: 65002
+        prefix:
+        - 10.100.2.0/24
+

@@ -1,6 +1,6 @@
 
 [junos]
-vSRX1   ansible_host=192.10.1.101
+vSRX1   host=192.10.1.101
 vSRX2	ansible_host=192.10.1.102
 vSRX3	ansible_host=192.10.1.103
 

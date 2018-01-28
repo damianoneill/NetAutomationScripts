@@ -1,0 +1,20 @@
+[edit]
++  routing-instances {
++      cust1 {
++          instance-type vrf;
++          interface ge-0/0/2.10;
++          route-distinguisher 65000:1;
++          vrf-target target:65000:1;
++          vrf-table-label;
++          protocols {
++              bgp {
++                  group ce2 {
++                      import __ANSIBLE_cust1_ce2_import;
++                      export __ANSIBLE_cust1_ce2_export;
++                      peer-as 65002;
++                      neighbor 192.100.2.2;
++                  }
++              }
++          }
++      }
++  }

@@ -1,0 +1,63 @@
+
+interfaces {
+    ge-0/0/0 {
+        description "vMX1"
+        unit 0 {
+            family inet {
+                address 172.10.13.3/24
+            }
+            family mpls;
+        }
+    }
+   
+    lo0 {
+        unit 0 {
+            family inet {
+                address 10.100.3.3/32;
+            }
+        }
+    }
+}
+routing-options {
+    router-id 10.100.3.3;
+    autonomous-system 65000;
+}
+protocols {
+    bgp {
+        group Core {
+            type internal;
+            local-address 10.100.3.3;
+            family inet {               
+                unicast;
+            }
+            family inet-vpn {
+                unicast;
+            }
+            neighbor 10.100.1.1;
+        }
+    }
+    ospf {
+        area 0 {
+            interface ge-0/0/0.0 {
+                interface-type p2p;
+                metric 10;
+            }
+            interface lo0.0 {
+                passive;
+            }
+        }
+    }
+    ldp {
+        interface ge-0/0/0.0 ;
+        interface lo0.0;
+    }
+    rsvp {
+        interface ge-0/0/0.0 ;
+    }
+    mpls {
+        interface ge-0/0/0.0 ;
+    }
+    lldp {
+        interface ge-0/0/0 ;
+    }
+}

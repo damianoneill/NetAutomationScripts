@@ -1,0 +1,139 @@
+---
+## First Play
+- hosts: localhost
+  name: Create node data model
+  gather_facts: no
+  tags: [ model ]
+  vars_files:
+  - "{{model|default('core-model.yml')}}"
+  tasks:
+  - name: Create per-node data model from Topology data model
+    template: src=core-to-nodes.j2 dest=./nodes.yml
+
+## Second Play
+- name: Generate Configuration for all routers
+  gather_facts: no
+  connection: local
+  hosts: all
+  tags: [ template ]
+  tasks:
+    - include_vars: "./nodes.yml"
+    - file: path=initial-config  state=directory
+      run_once: true
+    - file: path=core-config  state=directory
+      run_once: true
+    - name: Generate Initial Configuration
+      template: src=./conf-template/jnpr-initial.j2 dest=initial-config/{{inventory_hostname}}-initial.txt
+    - name: Generate Core Configuration
+      template: src=./conf-template/jnpr-core.j2 dest=core-config/{{inventory_hostname}}-core.txt
+
+## Third Play
+# commit variable is used to control the play
+# if commit=0 then we will not commit the changes we will only generate diff
+# if commit=1 then we will  commit the changes and generate diff
+- name: push the configuration to the devices
+  gather_facts: no
+  connection: local
+  hosts: all
+  tags: [ deploy ]
+  tasks:
+    - include_vars: "./nodes.yml"
+    - file: path=conf-diff state=directory
+      run_once: true
+    - name: load the configuration to the devices
+      napalm_install_config:
+        hostname: "{{ ansible_host }}"
+        username: "{{ ansible_user }}"
+        dev_os: "{{dev_os}}"
+        password: "{{ ansible_ssh_pass }}"
+        optional_args:
+          port: "{{ ansible_port }}"
+        config_file: core-config/{{inventory_hostname}}-core.txt
+        commit_changes: "{{commit}}"
+        diff_file: conf-diff/{{inventory_hostname}}-diff.txt
+      when: "inventory_hostname in nodes.keys()"
+
+## Fourth Play
+- name: Validate BGP and LLDP
+  gather_facts: no
+  connection: local
+  hosts: all
+  tags: [ validate ]
+  tasks:
+
+#  - name: Wait for LLDP to start
+#    pause: seconds=10 prompt="Waiting for LLDP to start"
+#    when: wait_lldp is defined
+
+  - name: GET BGP and LLDP output
+    napalm_get_facts:
+      hostname: "{{ ansible_host }}"
+      username: "{{ ansible_user }}"
+      dev_os: "{{dev_os}}"
+      password: "{{ ansible_ssh_pass }}"
+      optional_args:
+        port: "{{ ansible_port }}"
+      filter: 
+        - lldp_neighbors
+        - bgp_neighbors
+        - interfaces_ip
+        - interfaces
+
+  - name: Setting Variables for Validation
+    include_vars: nodes.yml
+  - set_fact: node={{nodes[inventory_hostname]}}
+  - set_fact: core_intf={{node.links.keys()}}
+  #- set_fact: lldp_intf={{napalm_lldp_neighbors.keys()}}
+  - debug: var=hostvars[inventory_hostname].napalm_lldp_neighbors
+
+  - name: Validate Interfaces has correct IP address
+    assert:
+      that: node.links[item].ip in hostvars[inventory_hostname].napalm_interfaces_ip[item].ipv4.keys()
+      msg:  |
+        Interface {{item}} has wrong IP address {{inventory_hostname}}
+    with_list: "{{node.links.keys()}}"
+    ignore_errors: true
+
+  - name: Validate all interfaces are operational
+    assert:
+      that: hostvars[inventory_hostname].napalm_interfaces[item.split('.')[0]].is_up == true
+      msg:  |
+        Interface {{item.split('.')[0]}} is down on {{inventory_hostname}}
+    with_list: "{{node.links.keys()}}"
+    ignore_errors: true
+
+  - name: Validate Correct LLDP Neigbours
+    assert:
+      that: node.links[item.key].remote == napalm_lldp_neighbors[item.key.split('.')[0]][0].hostname
+      msg:  |
+        {{inventory_hostname}} has incorrect neigbour on {{item.key}} interface 
+    with_dict: "{{node.links}}"
+    ignore_errors: true
+
+  - name: Validate BGP
+    assert:
+      that: napalm_bgp_neighbors.global.peers[item].is_up == true
+      msg: "Neighbor {{item}} is not operational"
+    with_list: "{{node.bgp.internal.peers}}"
+
+  - name: Ping to remote destinations
+    napalm_ping:
+      hostname: "{{ ansible_host }}"
+      username: "{{ ansible_user }}"
+      dev_os: "{{dev_os}}"
+      password: "{{ ansible_ssh_pass }}"
+      optional_args:
+        port: "{{ ansible_port }}"
+      destination: "{{nodes[item].rid}}"
+    with_list: "{{play_hosts}}"
+    when: dev_os == 'junos'
+    register: ping_result
+
+  - name: Validate network reachability
+    assert:
+      that: item.results.success is defined
+      msg: "{{item.item}} is not reachable to {{inventory_hostname}}"
+    with_list: "{{hostvars[inventory_hostname].ping_result.results}}"
+
+
+

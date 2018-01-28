@@ -1,6 +1,9 @@
 #
 # Nodes in the network
 #
+
+
+
 ---
 
 common:
@@ -8,13 +11,15 @@ common:
 
 nodes:
 
-  vSRX1:
+  vMX1:
+    hostname: vMX1
     mgmt: 192.10.1.101
     rid:  10.100.1.1
     links:
-      ge-0/0/2.0: { ip: 172.10.12.1, remote: vSRX2 , cost: 10 , vlan: 0}
-      ge-0/0/3.0: { ip: 172.10.13.1, remote: vSRX3 , cost: 10 , vlan: 0}
-      ge-0/0/4.40: { ip: 172.10.14.1, remote: XR4 , cost: 10 , vlan: 40}
+      ge-0/0/2.0: { ip: 172.10.12.1, remote: vMX2 , cost: 10 , vlan: 0}
+      ge-0/0/3.0: { ip: 172.10.13.1, remote: vMX3 , cost: 10 , vlan: 0}
+      ge-0/0/4.0: { ip: 172.10.14.1, remote: vMX4 , cost: 10 , vlan: 0}
+      ge-0/0/5.40: { ip: 172.10.15.1, remote: XR5 , cost: 10 , vlan: 40}
     bgp:
        internal:
          rr: true
@@ -22,18 +27,19 @@ nodes:
             - 10.100.2.2
             - 10.100.3.3
             - 10.100.4.4
+            - 10.100.5.5
          af:
             - inet
             - inet-vpn
     ospf:
         network: p2p
 
-  vSRX2:
+  vMX2:
+    hostname: vMX2
     mgmt: 192.10.1.102
     rid:  10.100.2.2
     links:
-      ge-0/0/2.0: { ip: 172.10.12.2, remote: vSRX1 , cost: 10 , vlan: 0}
-      ge-0/0/3.0: { ip: 172.10.23.2, remote: vSRX3 , cost: 10 , vlan: 0}
+      ge-0/0/0.0: { ip: 172.10.12.2, remote: vMX1 , cost: 10 , vlan: 0}
     bgp:
        internal:
          peers:
@@ -44,12 +50,12 @@ nodes:
     ospf:
         network: p2p
 
-  vSRX3:
+  vMX3:
+    hostname: vMX3
     mgmt: 192.10.1.103
     rid:  10.100.3.3
     links:
-      ge-0/0/2.0: { ip: 172.10.13.3, remote: vSRX1 , cost: 10 , vlan: 0}
-      ge-0/0/3.0: { ip: 172.10.23.3, remote: vSRX2 , cost: 10 , vlan: 0}
+      ge-0/0/0.0: { ip: 172.10.13.3, remote: vMX1 , cost: 10 , vlan: 0}
     bgp:
        internal:
          peers:
@@ -60,11 +66,28 @@ nodes:
     ospf:
         network: p2p
 
-  XR4:
+  vMX4:
+    hostname: vMX4
     mgmt: 192.10.1.104
     rid:  10.100.4.4
     links:
-      GigabitEthernet0/0/0/0.40: { ip: 172.10.14.4, remote: vSRX1 , cost: 10 , vlan: 40}
+      ge-0/0/0.0: { ip: 172.10.14.4, remote: vMX1 , cost: 10 , vlan: 0}
+    bgp:
+       internal:
+         peers:
+            - 10.100.1.1
+         af:
+            - inet
+            - inet-vpn
+    ospf:
+        network: p2p
+
+  XR5:
+    hostname: XR5
+    mgmt: 192.10.1.105
+    rid:  10.100.5.5
+    links:
+      GigabitEthernet0/0/0/0.40: { ip: 172.10.15.5, remote: vMX1 , cost: 10 , vlan: 40}
     bgp:
        internal:
          peers:

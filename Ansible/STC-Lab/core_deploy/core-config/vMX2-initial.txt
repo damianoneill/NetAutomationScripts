@@ -1,0 +1,34 @@
+
+system {
+    host-name {u'bgp': {u'internal': {u'peers': [u'10.100.1.1'], u'af': [u'inet', u'inet-vpn']}}, u'rid': u'10.100.2.2', u'ospf': {u'network': u'p2p'}, u'links': {u'ge-0/0/0.0': {u'ip': u'172.10.12.2', u'cost': 10, u'remote': u'vMX1', u'vlan': 0}}, u'mgmt': u'192.10.1.102'};
+    root-authentication {
+        encrypted-password "$6$S.xaC/hN$4VpnPBvDAySmBF6zeey8OxszkRBYBWXQLpq23GVTr2itYCSJDQiPxmObUgQ5Q6Gnz1PEGTynZqB8kzcc6PRMw/"; ## SECRET-DATA
+    }
+    services {
+        ssh;
+        netconf {
+            ssh;
+        }
+    }
+    syslog {
+        user * {
+            any emergency;
+        }
+        file messages {
+            any notice;
+            authorization info;
+        }
+        file interactive-commands {
+            interactive-commands any;
+        }
+    }
+}
+interfaces {
+    fxp0 {
+        unit 0 {
+            family inet {
+                address 192.10.1.102/24;
+            }
+        }
+    }
+}
